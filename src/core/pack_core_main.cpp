@@ -1,3 +1,5 @@
+#include "../library/pack_library_time.hpp"
+
 int main() {
-  return 0;
+  return EXIT_SUCCESS;
 }
