@@ -4,6 +4,12 @@
 #include "../library/pack_library_scope_profiler.hpp"
 #include "pack_client_app.hpp"
 
+namespace {
+
+const std::string gsc_LogPath{"log/client/"};
+
+}  // namespace
+
 static int sf_client_main() {
   _PACK_LIBRARY_LOG_FUNCTION_CALL_();
 
@@ -21,7 +27,7 @@ static int sf_client_main() {
 }
 
 int main() {
-  pack::library::logger::msf_set_log_directory("log/client/");
+  pack::library::logger::msf_set_log_directory(gsc_LogPath);
   pack::library::logger::msf_init();
 
   if (!pack::library::logger::msf_is_initialized()) {
