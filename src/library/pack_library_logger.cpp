@@ -6,23 +6,22 @@
 
 #include "pack_library_time.hpp"
 
-std::atomic<bool> pack::library::logger::msv_IsInitialized{false};
+namespace pack {
+namespace library {
 
-std::string pack::library::logger::msv_LogDirectory{"log/"};
+std::atomic<bool> logger::msv_IsInitialized{false};
 
-std::unique_ptr<std::ofstream> pack::library::logger::msp_ProfileStream{
-    nullptr};
-std::unique_ptr<std::ofstream> pack::library::logger::msp_LogStream{nullptr};
-std::unique_ptr<std::ofstream> pack::library::logger::msp_AsyncLogStream{
-    nullptr};
+std::string logger::msv_LogDirectory{"log/"};
 
-std::unique_ptr<std::mutex> pack::library::logger::msp_ProfileStreamMutex{
-    nullptr};
-std::unique_ptr<std::mutex> pack::library::logger::msp_LogStreamMutex{nullptr};
-std::unique_ptr<std::mutex> pack::library::logger::msp_AsyncLogStreamMutex{
-    nullptr};
+std::unique_ptr<std::ofstream> logger::msp_ProfileStream{nullptr};
+std::unique_ptr<std::ofstream> logger::msp_LogStream{nullptr};
+std::unique_ptr<std::ofstream> logger::msp_AsyncLogStream{nullptr};
 
-void pack::library::logger::msf_init() noexcept {
+std::unique_ptr<std::mutex> logger::msp_ProfileStreamMutex{nullptr};
+std::unique_ptr<std::mutex> logger::msp_LogStreamMutex{nullptr};
+std::unique_ptr<std::mutex> logger::msp_AsyncLogStreamMutex{nullptr};
+
+void logger::msf_init() noexcept {
   if (msv_IsInitialized) {
     return;
   }
@@ -69,7 +68,7 @@ void pack::library::logger::msf_init() noexcept {
   msv_IsInitialized = true;
 }
 
-void pack::library::logger::msf_destroy() noexcept {
+void logger::msf_destroy() noexcept {
   if (!msv_IsInitialized) {
     return;
   }
@@ -90,12 +89,9 @@ void pack::library::logger::msf_destroy() noexcept {
   msv_IsInitialized = false;
 }
 
-bool pack::library::logger::msf_is_initialized() noexcept {
-  return msv_IsInitialized;
-}
+bool logger::msf_is_initialized() noexcept { return msv_IsInitialized; }
 
-void pack::library::logger::msf_profile(
-    const std::string_view pc_Data) noexcept {
+void logger::msf_profile(const std::string_view pc_Data) noexcept {
   if (!msv_IsInitialized) {
     return;
   }
@@ -105,7 +101,7 @@ void pack::library::logger::msf_profile(
   *msp_ProfileStream << pc_Data;
 }
 
-void pack::library::logger::msf_log(const std::string_view pc_Data) noexcept {
+void logger::msf_log(const std::string_view pc_Data) noexcept {
   if (!msv_IsInitialized) {
     return;
   }
@@ -114,8 +110,7 @@ void pack::library::logger::msf_log(const std::string_view pc_Data) noexcept {
   *msp_LogStream << pc_Data;
 }
 
-void pack::library::logger::msf_async_log(
-    const std::string_view pc_Data) noexcept {
+void logger::msf_async_log(const std::string_view pc_Data) noexcept {
   if (!msv_IsInitialized) {
     return;
   }
@@ -125,12 +120,15 @@ void pack::library::logger::msf_async_log(
   *msp_AsyncLogStream << pc_Data;
 }
 
-void pack::library::logger::msf_set_log_directory(
+void logger::msf_set_log_directory(
     const std::string_view pc_LogDirectory) noexcept {
   msv_LogDirectory = pc_LogDirectory;
 }
 
-std::string pack::library::logger::msf_get_pid() noexcept {
+std::string logger::msf_get_pid() noexcept {
   return std::to_string(
       std::hash<std::thread::id>{}(std::this_thread::get_id()));
 }
+
+}  // namespace library
+}  // namespace pack

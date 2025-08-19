@@ -3,11 +3,13 @@
 #include "pack_library_logger.hpp"
 #include "pack_library_time.hpp"
 
-std::atomic<bool> pack::library::log_builder::msv_IsInitialized{false};
-std::atomic<bool> pack::library::log_builder::msv_IsNextSectionClosed{false};
+namespace pack {
+namespace library {
 
-pack::library::log_builder::log_builder(
-    const std::string_view pc_FuncSig) noexcept
+std::atomic<bool> log_builder::msv_IsInitialized{false};
+std::atomic<bool> log_builder::msv_IsNextSectionClosed{false};
+
+log_builder::log_builder(const std::string_view pc_FuncSig) noexcept
     : mc_StartTime{std::chrono::high_resolution_clock::now()} {
   const std::string lc_Header{"{ \"time\": \"" + time::msf_now() +
                               "\", \"pid\":\"" + logger::msf_get_pid() +
@@ -23,7 +25,7 @@ pack::library::log_builder::log_builder(
   msv_IsNextSectionClosed = false;
 }
 
-pack::library::log_builder::~log_builder() noexcept {
+log_builder::~log_builder() noexcept {
   const std::chrono::nanoseconds lc_Took{
       std::chrono::high_resolution_clock::now() - this->mc_StartTime};
 
@@ -35,7 +37,7 @@ pack::library::log_builder::~log_builder() noexcept {
   msv_IsNextSectionClosed = true;
 }
 
-void pack::library::log_builder::msf_init() noexcept {
+void log_builder::msf_init() noexcept {
   if (msf_is_initialized() || !logger::msf_is_initialized()) {
     return;
   }
@@ -46,7 +48,7 @@ void pack::library::log_builder::msf_init() noexcept {
   msv_IsInitialized = true;
 }
 
-void pack::library::log_builder::msf_destroy() noexcept {
+void log_builder::msf_destroy() noexcept {
   if (!msf_is_initialized() || !logger::msf_is_initialized()) {
     return;
   }
@@ -57,11 +59,9 @@ void pack::library::log_builder::msf_destroy() noexcept {
   msv_IsInitialized = false;
 }
 
-bool pack::library::log_builder::msf_is_initialized() noexcept {
-  return msv_IsInitialized;
-}
+bool log_builder::msf_is_initialized() noexcept { return msv_IsInitialized; }
 
-void pack::library::log_builder::msf_log(
+void log_builder::msf_log(
     const std::string_view pc_Tag, const std::string_view pc_Message,
     const boost::system::error_code pc_ErrorCode) noexcept {
   const std::string lc_Body{msf_create_body(pc_Tag, pc_Message, pc_ErrorCode)};
@@ -75,7 +75,7 @@ void pack::library::log_builder::msf_log(
   msv_IsNextSectionClosed = true;
 }
 
-void pack::library::log_builder::msf_async_log(
+void log_builder::msf_async_log(
     const std::string_view pc_Tag, const std::string_view pc_Message,
     const boost::system::error_code pc_ErrorCode) noexcept {
   const std::string lc_PID{
@@ -94,7 +94,7 @@ void pack::library::log_builder::msf_async_log(
   logger::msf_async_log(lv_Record + "\" }");
 }
 
-std::string pack::library::log_builder::msf_create_body(
+std::string log_builder::msf_create_body(
     const std::string_view pc_Tag, const std::string_view pc_Message,
     const boost::system::error_code pc_ErrorCode) noexcept {
   std::string lv_Body{};
@@ -113,3 +113,6 @@ std::string pack::library::log_builder::msf_create_body(
 
   return lv_Body;
 }
+
+}  // namespace library
+}  // namespace pack

@@ -3,22 +3,24 @@
 #include "pack_library_logger.hpp"
 #include "pack_library_time.hpp"
 
-std::atomic<bool> pack::library::scope_profiler::msv_IsInitialized{false};
+namespace pack {
+namespace library {
 
-pack::library::scope_profiler::scope_profiler(
-    const std::string_view pc_FuncSig) noexcept
+std::atomic<bool> scope_profiler::msv_IsInitialized{false};
+
+scope_profiler::scope_profiler(const std::string_view pc_FuncSig) noexcept
     : mc_Name{pc_FuncSig} {
   this->mv_Pid = logger::msf_get_pid();
   this->mv_Ts = time::msf_since_epoch();
 }
 
-pack::library::scope_profiler::~scope_profiler() noexcept {
+scope_profiler::~scope_profiler() noexcept {
   this->mv_Dur = time::msf_since_epoch() - this->mv_Ts;
 
   logger::msf_profile(this->mf_create_record());
 }
 
-void pack::library::scope_profiler::msf_init() noexcept {
+void scope_profiler::msf_init() noexcept {
   if (msf_is_initialized() || !logger::msf_is_initialized()) {
     return;
   }
@@ -29,7 +31,7 @@ void pack::library::scope_profiler::msf_init() noexcept {
   msv_IsInitialized = true;
 }
 
-void pack::library::scope_profiler::msf_destroy() noexcept {
+void scope_profiler::msf_destroy() noexcept {
   if (!msf_is_initialized() || !logger::msf_is_initialized()) {
     return;
   }
@@ -39,11 +41,9 @@ void pack::library::scope_profiler::msf_destroy() noexcept {
   msv_IsInitialized = false;
 }
 
-bool pack::library::scope_profiler::msf_is_initialized() noexcept {
-  return msv_IsInitialized;
-}
+bool scope_profiler::msf_is_initialized() noexcept { return msv_IsInitialized; }
 
-std::string pack::library::scope_profiler::mf_create_record() const noexcept {
+std::string scope_profiler::mf_create_record() const noexcept {
   std::string lv_Record{};
 
   lv_Record += ", { \"cat\": \"" + this->mc_Cat;
@@ -56,3 +56,6 @@ std::string pack::library::scope_profiler::mf_create_record() const noexcept {
 
   return lv_Record;
 }
+
+}  // namespace library
+}  // namespace pack
