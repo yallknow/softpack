@@ -1,52 +1,54 @@
+#include <string_view>
+
 #include "../library/pack_library_log_builder.hpp"
 #include "../library/pack_library_logger.hpp"
 #include "../library/pack_library_preprocessor.hpp"
 #include "../library/pack_library_scope_profiler.hpp"
+
 #include "pack_client_app.hpp"
 
 namespace {
 
-const std::string gsc_LogPath{"log/client/"};
+constexpr std::string_view gsc_logDirectory{"log/client/"};
 
-}  // namespace
+int client_main() {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-static int sf_client_main() {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+  pack::client::app app{};
 
-  pack::client::app lv_App{};
-
-  if (!lv_App.mf_start()) {
-    _PACK_LIBRARY_LOG_ERROR_("Can't start client!");
+  if (!app.start()) {
+    PACK_LIBRARY_LOG_ERROR("Can't start client!");
 
     return EXIT_FAILURE;
   }
 
-  _PACK_LIBRARY_LOG_INFO_("Client stopped successfully.");
+  PACK_LIBRARY_LOG_INFO("Client stopped successfully.");
 
   return EXIT_SUCCESS;
 }
 
+}  // namespace
+
 int main() {
-  pack::library::logger::msf_set_log_directory(gsc_LogPath);
-  pack::library::logger::msf_init();
+  pack::library::logger::init(gsc_logDirectory);
 
-  if (!pack::library::logger::msf_is_initialized()) {
+  if (!pack::library::logger::is_initialized()) {
     return EXIT_FAILURE;
   }
 
-  pack::library::scope_profiler::msf_init();
-  pack::library::log_builder::msf_init();
+  pack::library::scope_profiler::init();
+  pack::library::log_builder::init();
 
-  if (!pack::library::scope_profiler::msf_is_initialized() ||
-      !pack::library::log_builder::msf_is_initialized()) {
+  if (!pack::library::scope_profiler::is_initialized() ||
+      !pack::library::log_builder::is_initialized()) {
     return EXIT_FAILURE;
   }
 
-  const int lc_ReturnValue{sf_client_main()};
+  const int c_result{client_main()};
 
-  pack::library::scope_profiler::msf_destroy();
-  pack::library::log_builder::msf_destroy();
-  pack::library::logger::msf_destroy();
+  pack::library::scope_profiler::destroy();
+  pack::library::log_builder::destroy();
+  pack::library::logger::destroy();
 
-  return lc_ReturnValue;
+  return c_result;
 }

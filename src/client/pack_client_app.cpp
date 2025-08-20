@@ -3,7 +3,13 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <cstdint>
+#include <string>
+
 #include "../library/pack_library_preprocessor.hpp"
+
+namespace pack {
+namespace client {
 
 namespace {
 
@@ -18,97 +24,94 @@ const sf::VideoMode gsc_VideoMode{gsc_WindowWidth, gsc_WindowHeight};
 
 }  // namespace
 
-namespace pack {
-namespace client {
+app::app() noexcept : m_window{gsc_VideoMode, gsc_WindowTitle}, m_texture{} {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-app::app() noexcept : mv_Window{gsc_VideoMode, gsc_WindowTitle}, mv_Texture{} {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
-
-  this->mv_Window.setFramerateLimit(gsc_WindowFramerateLimit);
-  this->mv_Texture.create(gsc_WindowWidth, gsc_WindowHeight);
+  this->m_window.setFramerateLimit(gsc_WindowFramerateLimit);
+  this->m_texture.create(gsc_WindowWidth, gsc_WindowHeight);
 }
 
-app::~app() noexcept { _PACK_LIBRARY_LOG_FUNCTION_CALL_(); }
+app::~app() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-bool app::mf_start() noexcept {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+bool app::start() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  ImGui::SFML::Init(this->mv_Window);
+  ImGui::SFML::Init(this->m_window);
 
-  ImGuiIO& ll_IO = ImGui::GetIO();
-  ll_IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  ImGuiIO& ioLink = ImGui::GetIO();
+  ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  this->mf_main_loop();
+  this->main_loop();
 
   ImGui::SFML::Shutdown();
 
   return true;
 }
 
-void app::mf_main_loop() noexcept {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+void app::main_loop() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  sf::Clock lv_DeltaClock{};
+  sf::Clock deltaClock{};
 
-  while (this->mv_Window.isOpen()) {
-    this->mf_poll_events();
+  while (this->m_window.isOpen()) {
+    this->poll_events();
 
-    if (!this->mv_Window.isOpen()) {
+    if (!this->m_window.isOpen()) {
       break;
     }
 
-    ImGui::SFML::Update(this->mv_Window, lv_DeltaClock.restart());
+    ImGui::SFML::Update(this->m_window, deltaClock.restart());
 
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->mf_handle_viewport();
+    this->handle_viewport();
 
-    ImGui::SFML::Render(this->mv_Window);
+    ImGui::SFML::Render(this->m_window);
 
-    this->mv_Window.display();
+    this->m_window.display();
   }
 }
 
-void app::mf_poll_events() noexcept {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+void app::poll_events() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  sf::Event lv_Event{};
+  sf::Event event{};
 
-  while (this->mv_Window.pollEvent(lv_Event)) {
-    ImGui::SFML::ProcessEvent(this->mv_Window, lv_Event);
+  while (this->m_window.pollEvent(event)) {
+    ImGui::SFML::ProcessEvent(this->m_window, event);
 
-    switch (lv_Event.type) {
+    switch (event.type) {
       case sf::Event::Closed: {
-        this->mv_Window.close();
+        this->m_window.close();
         break;
       }
     }
   }
 }
 
-void app::mf_handle_viewport() noexcept {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+void app::handle_viewport() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->mv_Texture.clear(sf::Color::Black);
+  this->m_texture.clear(sf::Color::Black);
 
-  this->mf_draw_viewport();
+  this->draw_viewport();
 
   if (ImGui::Begin(gsc_ViewportTitle.c_str())) {
-    ImGui::Image(this->mv_Texture);
+    ImGui::Image(this->m_texture);
   }
   ImGui::End();
 }
 
-void app::mf_draw_viewport() noexcept {
-  _PACK_LIBRARY_LOG_FUNCTION_CALL_();
+void app::draw_viewport() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   sf::CircleShape shape(50.0f);
   shape.setFillColor(sf::Color{150, 50, 250});
   shape.setOutlineThickness(10.0f);
   shape.setOutlineColor(sf::Color{250, 150, 100});
 
-  this->mv_Texture.draw(shape);
+  this->m_texture.draw(shape);
 }
 
 }  // namespace client

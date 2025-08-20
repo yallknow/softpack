@@ -1,33 +1,41 @@
 #pragma once
 
-#ifndef _PACK_CLIENT_APP_
-#define _PACK_CLIENT_APP_
+#ifndef PACK_CLIENT_APP
+#define PACK_CLIENT_APP
 
 #include <SFML/Graphics.hpp>
 
 namespace pack {
 namespace client {
 
-class app {
+class app final {
  public:
   explicit app() noexcept;
-  virtual ~app() noexcept;
+  /* virtual */ ~app() noexcept;
 
  public:
-  bool mf_start() noexcept;
+  explicit app(const app& c_other) noexcept = delete;
+  explicit app(app&& otherRLink) noexcept = delete;
+
+ public:
+  app& operator=(const app& c_other) noexcept = delete;
+  app& operator=(app&& otherRLink) noexcept = delete;
+
+ public:
+  bool start() noexcept;
 
  private:
-  void mf_main_loop() noexcept;
-  void mf_poll_events() noexcept;
-  void mf_handle_viewport() noexcept;
-  void mf_draw_viewport() noexcept;
+  void main_loop() noexcept;
+  void poll_events() noexcept;
+  void handle_viewport() noexcept;
+  void draw_viewport() noexcept;
 
  private:
-  sf::RenderWindow mv_Window;
-  sf::RenderTexture mv_Texture;
+  sf::RenderWindow m_window;
+  sf::RenderTexture m_texture;
 };
 
 }  // namespace client
 }  // namespace pack
 
-#endif  // !_PACK_CLIENT_APP_
+#endif  // !PACK_CLIENT_APP
