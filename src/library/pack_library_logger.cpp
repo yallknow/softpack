@@ -9,123 +9,123 @@
 namespace pack {
 namespace library {
 
-std::atomic<bool> logger::msv_IsInitialized{false};
+namespace {
 
-std::string logger::msv_LogDirectory{"log/"};
+constexpr std::string_view gsc_extension{".json"};
 
-std::unique_ptr<std::ofstream> logger::msp_ProfileStream{nullptr};
-std::unique_ptr<std::ofstream> logger::msp_LogStream{nullptr};
-std::unique_ptr<std::ofstream> logger::msp_AsyncLogStream{nullptr};
+constexpr std::string_view gsc_profilePostfix{"_profile"};
+constexpr std::string_view gsc_logPostfix{"_log"};
+constexpr std::string_view gsc_asyncPostfix{"_async"};
 
-std::unique_ptr<std::mutex> logger::msp_ProfileStreamMutex{nullptr};
-std::unique_ptr<std::mutex> logger::msp_LogStreamMutex{nullptr};
-std::unique_ptr<std::mutex> logger::msp_AsyncLogStreamMutex{nullptr};
+}  // namespace
 
-void logger::msf_init() noexcept {
-  if (msv_IsInitialized) {
+std::atomic<bool> logger::ms_isInitialized{false};
+
+std::unique_ptr<std::ofstream> logger::ms_profileStreamUPtr{nullptr};
+std::unique_ptr<std::ofstream> logger::ms_logStreamUPtr{nullptr};
+std::unique_ptr<std::ofstream> logger::ms_asyncStreamUPtr{nullptr};
+
+std::unique_ptr<std::mutex> logger::ms_profileMutexUPtr{nullptr};
+std::unique_ptr<std::mutex> logger::ms_logMutexUPtr{nullptr};
+std::unique_ptr<std::mutex> logger::ms_asyncMutexUPtr{nullptr};
+
+void logger::init(const std::string_view c_logDirectory) noexcept {
+  if (ms_isInitialized) {
     return;
   }
 
-  std::error_code lv_ErrorCode{};
+  std::error_code errorCode{};
 
-  if (!std::filesystem::exists(msv_LogDirectory, lv_ErrorCode)) {
-    std::filesystem::create_directories(msv_LogDirectory, lv_ErrorCode);
+  if (!std::filesystem::exists(c_logDirectory, errorCode)) {
+    std::filesystem::create_directories(c_logDirectory, errorCode);
 
-    if (lv_ErrorCode) {
+    if (errorCode) {
       return;
     }
   }
 
-  const std::string lc_Extension{".json"};
-  const std::string lc_TimeNow{time::msf_now_underscore()};
+  const std::string c_currentTime{time::now_underscore()};
 
-  msp_ProfileStream.reset(new (std::nothrow) std::ofstream{
-      std::string{msv_LogDirectory + '/' + lc_TimeNow +
-                  msc_ProfileFilenamePostfix.data() + lc_Extension},
+  ms_profileStreamUPtr.reset(new (std::nothrow) std::ofstream{
+      std::string{c_logDirectory} + '/' + c_currentTime +
+          gsc_profilePostfix.data() + gsc_extension.data(),
       std::ofstream::trunc});
 
-  msp_LogStream.reset(new (std::nothrow) std::ofstream{
-      std::string{msv_LogDirectory + '/' + lc_TimeNow +
-                  msc_LogFilenamePostfix.data() + lc_Extension},
+  ms_logStreamUPtr.reset(new (std::nothrow) std::ofstream{
+      std::string{c_logDirectory} + '/' + c_currentTime +
+          gsc_logPostfix.data() + gsc_extension.data(),
       std::ofstream::trunc});
 
-  msp_AsyncLogStream.reset(new (std::nothrow) std::ofstream{
-      std::string{msv_LogDirectory + '/' + lc_TimeNow +
-                  msc_AsyncLogFilenamePostfix.data() + lc_Extension},
+  ms_asyncStreamUPtr.reset(new (std::nothrow) std::ofstream{
+      std::string{c_logDirectory} + '/' + c_currentTime +
+          gsc_asyncPostfix.data() + gsc_extension.data(),
       std::ofstream::trunc});
 
-  msp_ProfileStreamMutex.reset(new (std::nothrow) std::mutex{});
-  msp_LogStreamMutex.reset(new (std::nothrow) std::mutex{});
-  msp_AsyncLogStreamMutex.reset(new (std::nothrow) std::mutex{});
+  ms_profileMutexUPtr.reset(new (std::nothrow) std::mutex{});
+  ms_logMutexUPtr.reset(new (std::nothrow) std::mutex{});
+  ms_asyncMutexUPtr.reset(new (std::nothrow) std::mutex{});
 
-  if (!msp_ProfileStream || !msp_ProfileStream->is_open() || !msp_LogStream ||
-      !msp_LogStream->is_open() || !msp_AsyncLogStream ||
-      !msp_AsyncLogStream->is_open() || !msp_ProfileStreamMutex ||
-      !msp_LogStreamMutex || !msp_AsyncLogStreamMutex) {
+  if (!ms_profileStreamUPtr || !ms_profileStreamUPtr->is_open() ||
+      !ms_logStreamUPtr || !ms_logStreamUPtr->is_open() ||
+      !ms_asyncStreamUPtr || !ms_asyncStreamUPtr->is_open() ||
+      !ms_profileMutexUPtr || !ms_logStreamUPtr || !ms_asyncStreamUPtr) {
     return;
   }
 
-  msv_IsInitialized = true;
+  ms_isInitialized = true;
 }
 
-void logger::msf_destroy() noexcept {
-  if (!msv_IsInitialized) {
+void logger::destroy() noexcept {
+  if (!ms_isInitialized) {
     return;
   }
 
-  msp_ProfileStream->close();
-  msp_ProfileStream.reset();
+  ms_profileStreamUPtr->close();
+  ms_profileStreamUPtr.reset();
 
-  msp_LogStream->close();
-  msp_LogStream.reset();
+  ms_logStreamUPtr->close();
+  ms_logStreamUPtr.reset();
 
-  msp_AsyncLogStream->close();
-  msp_AsyncLogStream.reset();
+  ms_asyncStreamUPtr->close();
+  ms_asyncStreamUPtr.reset();
 
-  msp_ProfileStreamMutex.reset();
-  msp_LogStreamMutex.reset();
-  msp_AsyncLogStreamMutex.reset();
+  ms_profileMutexUPtr.reset();
+  ms_logMutexUPtr.reset();
+  ms_asyncMutexUPtr.reset();
 
-  msv_IsInitialized = false;
+  ms_isInitialized = false;
 }
 
-bool logger::msf_is_initialized() noexcept { return msv_IsInitialized; }
+bool logger::is_initialized() noexcept { return ms_isInitialized; }
 
-void logger::msf_profile(const std::string_view pc_Data) noexcept {
-  if (!msv_IsInitialized) {
+void logger::profile(const std::string_view c_data) noexcept {
+  if (!ms_isInitialized) {
     return;
   }
 
-  const std::lock_guard<std::mutex> lc_ProfileStreamLock{
-      *msp_ProfileStreamMutex};
-  *msp_ProfileStream << pc_Data;
+  const std::lock_guard<std::mutex> c_lock{*ms_profileMutexUPtr};
+  *ms_profileStreamUPtr << c_data;
 }
 
-void logger::msf_log(const std::string_view pc_Data) noexcept {
-  if (!msv_IsInitialized) {
+void logger::log(const std::string_view c_data) noexcept {
+  if (!ms_isInitialized) {
     return;
   }
 
-  const std::lock_guard<std::mutex> lc_LogStreamLock{*msp_LogStreamMutex};
-  *msp_LogStream << pc_Data;
+  const std::lock_guard<std::mutex> c_lock{*ms_logMutexUPtr};
+  *ms_logStreamUPtr << c_data;
 }
 
-void logger::msf_async_log(const std::string_view pc_Data) noexcept {
-  if (!msv_IsInitialized) {
+void logger::async(const std::string_view c_data) noexcept {
+  if (!ms_isInitialized) {
     return;
   }
 
-  const std::lock_guard<std::mutex> lc_AsyncLogStreamLock{
-      *msp_AsyncLogStreamMutex};
-  *msp_AsyncLogStream << pc_Data;
+  const std::lock_guard<std::mutex> c_lock{*ms_asyncMutexUPtr};
+  *ms_asyncStreamUPtr << c_data;
 }
 
-void logger::msf_set_log_directory(
-    const std::string_view pc_LogDirectory) noexcept {
-  msv_LogDirectory = pc_LogDirectory;
-}
-
-std::string logger::msf_get_pid() noexcept {
+std::string logger::get_pid() noexcept {
   return std::to_string(
       std::hash<std::thread::id>{}(std::this_thread::get_id()));
 }

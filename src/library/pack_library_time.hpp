@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _PACK_LIBRARY_TIME_
-#define _PACK_LIBRARY_TIME_
+#ifndef PACK_LIBRARY_TIME
+#define PACK_LIBRARY_TIME
 
 #include <cstdint>
 #include <string>
@@ -11,25 +11,25 @@ namespace library {
 
 class time final {
  public:
-  static std::string msf_now() noexcept;
-  static std::string msf_now_underscore() noexcept;
-
-  static std::uint64_t msf_since_epoch() noexcept;
-
- public:
   explicit time() noexcept = delete;
   /* virtual */ ~time() noexcept = delete;
 
  public:
-  explicit time(const time& pcl_Other) noexcept = delete;
-  explicit time(time&& pr_Other) noexcept = delete;
+  explicit time(const time& c_other) noexcept = delete;
+  explicit time(time&& otherRLink) noexcept = delete;
 
  public:
-  time& operator=(const time& pcl_Other) noexcept = delete;
-  time& operator=(time&& pr_Other) noexcept = delete;
+  time& operator=(const time& c_other) noexcept = delete;
+  time& operator=(time&& otherRLink) noexcept = delete;
+
+ public:
+  static std::string now() noexcept;
+  static std::string now_underscore() noexcept;
+
+  static std::uint64_t since_epoch() noexcept;
 };
 
 }  // namespace library
 }  // namespace pack
 
-#endif  // !_PACK_LIBRARY_TIME_
+#endif  // !PACK_LIBRARY_TIME

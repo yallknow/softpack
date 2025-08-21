@@ -6,55 +6,71 @@
 namespace pack {
 namespace library {
 
-std::atomic<bool> scope_profiler::msv_IsInitialized{false};
+namespace {
 
-scope_profiler::scope_profiler(const std::string_view pc_FuncSig) noexcept
-    : mc_Name{pc_FuncSig} {
-  this->mv_Pid = logger::msf_get_pid();
-  this->mv_Ts = time::msf_since_epoch();
-}
+constexpr std::string_view gsc_cat{};
+constexpr std::string_view gsc_ph{"X"};
+constexpr std::string_view gsc_tid{"0"};
+
+}  // namespace
+
+std::atomic<bool> scope_profiler::ms_isInitialized{false};
+
+scope_profiler::scope_profiler(const std::string_view c_funcsig) noexcept
+    : mc_name{c_funcsig}, m_ts{time::since_epoch()}, m_pid{logger::get_pid()} {}
 
 scope_profiler::~scope_profiler() noexcept {
-  this->mv_Dur = time::msf_since_epoch() - this->mv_Ts;
-
-  logger::msf_profile(this->mf_create_record());
+  logger::profile(this->record(time::since_epoch() - this->m_ts));
 }
 
-void scope_profiler::msf_init() noexcept {
-  if (msf_is_initialized() || !logger::msf_is_initialized()) {
+void scope_profiler::init() noexcept {
+  if (is_initialized() || !logger::is_initialized()) {
     return;
   }
 
-  logger::msf_profile("[ {} ");
-  const scope_profiler lc_ScopeProfiler{__FUNCSIG__};
+  logger::profile("[ {} ");
+  const scope_profiler c_profiler{__FUNCSIG__};
 
-  msv_IsInitialized = true;
+  ms_isInitialized = true;
 }
 
-void scope_profiler::msf_destroy() noexcept {
-  if (!msf_is_initialized() || !logger::msf_is_initialized()) {
+void scope_profiler::destroy() noexcept {
+  if (!is_initialized() || !logger::is_initialized()) {
     return;
   }
 
-  logger::msf_profile(" ]");
+  logger::profile(" ]");
 
-  msv_IsInitialized = false;
+  ms_isInitialized = false;
 }
 
-bool scope_profiler::msf_is_initialized() noexcept { return msv_IsInitialized; }
+bool scope_profiler::is_initialized() noexcept { return ms_isInitialized; }
 
-std::string scope_profiler::mf_create_record() const noexcept {
-  std::string lv_Record{};
+std::string scope_profiler::record(const std::uint64_t& c_dur) const noexcept {
+  std::string record{};
 
-  lv_Record += ", { \"cat\": \"" + this->mc_Cat;
-  lv_Record += "\", \"dur\": " + std::to_string(this->mv_Dur);
-  lv_Record += ", \"name\": \"" + this->mc_Name;
-  lv_Record += "\", \"ph\": \"" + this->mc_Ph;
-  lv_Record += "\", \"pid\": " + this->mv_Pid;
-  lv_Record += ", \"tid\": " + this->mc_Tid;
-  lv_Record += ", \"ts\": " + std::to_string(this->mv_Ts) + "}";
+  record += ", { \"cat\": \"";
+  record += gsc_cat;
 
-  return lv_Record;
+  record += "\", \"dur\": ";
+  record += std::to_string(c_dur);
+
+  record += ", \"name\": \"";
+  record += this->mc_name;
+
+  record += "\", \"ph\": \"";
+  record += gsc_ph;
+
+  record += "\", \"pid\": ";
+  record += this->m_pid;
+
+  record += ", \"tid\": ";
+  record += gsc_tid;
+
+  record += ", \"ts\": ";
+  record += std::to_string(this->m_ts) + "}";
+
+  return record;
 }
 
 }  // namespace library

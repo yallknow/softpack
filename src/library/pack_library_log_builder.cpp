@@ -6,112 +6,102 @@
 namespace pack {
 namespace library {
 
-std::atomic<bool> log_builder::msv_IsInitialized{false};
-std::atomic<bool> log_builder::msv_IsNextSectionClosed{false};
+std::atomic<bool> log_builder::ms_isInitialized{false};
+std::atomic<bool> log_builder::ms_isNextSectionClosed{false};
 
-log_builder::log_builder(const std::string_view pc_FuncSig) noexcept
-    : mc_StartTime{std::chrono::high_resolution_clock::now()} {
-  const std::string lc_Header{"{ \"time\": \"" + time::msf_now() +
-                              "\", \"pid\":\"" + logger::msf_get_pid() +
-                              "\", \"name\": \"" + pc_FuncSig.data() +
-                              "\", \"next\": [ "};
+log_builder::log_builder(const std::string_view c_funcsig) noexcept
+    : mc_startTime{std::chrono::high_resolution_clock::now()} {
+  const std::string c_header{"{ \"time\": \"" + time::now() + "\", \"pid\":\"" +
+                             logger::get_pid() + "\", \"name\": \"" +
+                             c_funcsig.data() + "\", \"next\": [ "};
 
-  if (msv_IsNextSectionClosed) {
-    logger::msf_log(", " + lc_Header);
-  } else {
-    logger::msf_log(lc_Header);
-  }
+  logger::log(ms_isNextSectionClosed ? ", " + c_header : c_header);
 
-  msv_IsNextSectionClosed = false;
+  ms_isNextSectionClosed = false;
 }
 
 log_builder::~log_builder() noexcept {
-  const std::chrono::nanoseconds lc_Took{
-      std::chrono::high_resolution_clock::now() - this->mc_StartTime};
+  const std::chrono::nanoseconds c_took{
+      std::chrono::high_resolution_clock::now() - this->mc_startTime};
 
-  const std::string lc_Footer{
-      " ], \"took(ns)\": " + std::to_string(lc_Took.count()) + " }"};
+  const std::string c_footer{
+      " ], \"took(ns)\": " + std::to_string(c_took.count()) + " }"};
 
-  logger::msf_log(lc_Footer);
+  logger::log(c_footer);
 
-  msv_IsNextSectionClosed = true;
+  ms_isNextSectionClosed = true;
 }
 
-void log_builder::msf_init() noexcept {
-  if (msf_is_initialized() || !logger::msf_is_initialized()) {
+void log_builder::init() noexcept {
+  if (is_initialized() || !logger::is_initialized()) {
     return;
   }
 
-  logger::msf_log("[ ");
-  logger::msf_async_log("[ {}");
+  logger::log("[ ");
+  logger::async("[ {}");
 
-  msv_IsInitialized = true;
+  ms_isInitialized = true;
 }
 
-void log_builder::msf_destroy() noexcept {
-  if (!msf_is_initialized() || !logger::msf_is_initialized()) {
+void log_builder::destroy() noexcept {
+  if (!is_initialized() || !logger::is_initialized()) {
     return;
   }
 
-  logger::msf_log(" ]");
-  logger::msf_async_log(" ]");
+  logger::log(" ]");
+  logger::async(" ]");
 
-  msv_IsInitialized = false;
+  ms_isInitialized = false;
 }
 
-bool log_builder::msf_is_initialized() noexcept { return msv_IsInitialized; }
+bool log_builder::is_initialized() noexcept { return ms_isInitialized; }
 
-void log_builder::msf_log(
-    const std::string_view pc_Tag, const std::string_view pc_Message,
-    const boost::system::error_code pc_ErrorCode) noexcept {
-  const std::string lc_Body{msf_create_body(pc_Tag, pc_Message, pc_ErrorCode)};
+void log_builder::log(const std::string_view c_tag,
+                      const std::string_view c_message,
+                      const boost::system::error_code c_errorCode) noexcept {
+  const std::string c_body{create_body(c_tag, c_message, c_errorCode)};
 
-  if (msv_IsNextSectionClosed) {
-    logger::msf_log(", " + lc_Body);
-  } else {
-    logger::msf_log(lc_Body);
-  }
+  logger::log(ms_isNextSectionClosed ? ", " + c_body : c_body);
 
-  msv_IsNextSectionClosed = true;
+  ms_isNextSectionClosed = true;
 }
 
-void log_builder::msf_async_log(
-    const std::string_view pc_Tag, const std::string_view pc_Message,
-    const boost::system::error_code pc_ErrorCode) noexcept {
-  const std::string lc_PID{
+void log_builder::async(const std::string_view c_tag,
+                        const std::string_view c_message,
+                        const boost::system::error_code c_errorCode) noexcept {
+  const std::string c_pid{
       std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id()))};
 
-  std::string lv_Record{", { \"time\": \"" + time::msf_now() +
-                        "\", \"pid\": \"" + lc_PID.c_str() + "\", \"tag\": \"" +
-                        pc_Tag.data() + "\", \"value\": \"" +
-                        pc_Message.data()};
+  std::string record{", { \"time\": \"" + time::now() + "\", \"pid\": \"" +
+                     c_pid.c_str() + "\", \"tag\": \"" + c_tag.data() +
+                     "\", \"value\": \"" + c_message.data()};
 
-  if (pc_ErrorCode) {
-    lv_Record +=
-        " (" + pc_ErrorCode.to_string() + " : " + pc_ErrorCode.message() + ')';
+  if (c_errorCode) {
+    record +=
+        " (" + c_errorCode.to_string() + " : " + c_errorCode.message() + ')';
   }
 
-  logger::msf_async_log(lv_Record + "\" }");
+  logger::async(record + "\" }");
 }
 
-std::string log_builder::msf_create_body(
-    const std::string_view pc_Tag, const std::string_view pc_Message,
-    const boost::system::error_code pc_ErrorCode) noexcept {
-  std::string lv_Body{};
+std::string log_builder::create_body(
+    const std::string_view c_tag, const std::string_view c_message,
+    const boost::system::error_code c_errorCode) noexcept {
+  std::string body{};
 
-  lv_Body += "{ \"";
-  lv_Body += pc_Tag;
-  lv_Body += "\": \"";
-  lv_Body += pc_Message;
+  body += "{ \"";
+  body += c_tag;
+  body += "\": \"";
+  body += c_message;
 
-  if (pc_ErrorCode) {
-    lv_Body +=
-        " (" + pc_ErrorCode.to_string() + " : " + pc_ErrorCode.message() + ')';
+  if (c_errorCode) {
+    body +=
+        " (" + c_errorCode.to_string() + " : " + c_errorCode.message() + ')';
   }
 
-  lv_Body += "\" }";
+  body += "\" }";
 
-  return lv_Body;
+  return body;
 }
 
 }  // namespace library

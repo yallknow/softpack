@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _PACK_LIBRARY_SCOPE_PROFILER_
-#define _PACK_LIBRARY_SCOPE_PROFILER_
+#ifndef PACK_LIBRARY_SCOPE_PROFILER
+#define PACK_LIBRARY_SCOPE_PROFILER
 
 #include <atomic>
 #include <cstdint>
@@ -13,43 +13,38 @@ namespace library {
 
 class scope_profiler final {
  public:
-  explicit scope_profiler(const std::string_view pc_FuncSig) noexcept;
+  explicit scope_profiler(const std::string_view c_funcsig) noexcept;
   /* virtual */ ~scope_profiler() noexcept;
 
  public:
-  static void msf_init() noexcept;
-  static void msf_destroy() noexcept;
-
-  static bool msf_is_initialized() noexcept;
-
- private:
-  std::string mf_create_record() const noexcept;
-
- private:
-  const std::string mc_Name;
-  const std::string mc_Cat{};
-  const std::string mc_Ph{"X"};
-  const std::string mc_Tid{"0"};
-
- private:
-  std::string mv_Pid{};
-
-  std::uint64_t mv_Ts{};
-  std::uint64_t mv_Dur{};
-
- private:
-  static std::atomic<bool> msv_IsInitialized;
+  explicit scope_profiler(const scope_profiler& c_other) noexcept = delete;
+  explicit scope_profiler(scope_profiler&& otherRLink) noexcept = delete;
 
  public:
-  explicit scope_profiler(const scope_profiler& pcl_Other) noexcept = delete;
-  explicit scope_profiler(scope_profiler&& pr_Other) noexcept = delete;
+  scope_profiler& operator=(const scope_profiler& c_other) noexcept = delete;
+  scope_profiler& operator=(scope_profiler&& otherRLink) noexcept = delete;
 
  public:
-  scope_profiler& operator=(const scope_profiler& pcl_Other) noexcept = delete;
-  scope_profiler& operator=(scope_profiler&& pr_Other) noexcept = delete;
+  static void init() noexcept;
+  static void destroy() noexcept;
+
+  static bool is_initialized() noexcept;
+
+ private:
+  std::string record(const std::uint64_t& c_dur) const noexcept;
+
+ private:
+  const std::string mc_name;
+
+ private:
+  std::uint64_t m_ts;
+  std::string m_pid;
+
+ private:
+  static std::atomic<bool> ms_isInitialized;
 };
 
 }  // namespace library
 }  // namespace pack
 
-#endif  // !_PACK_LIBRARY_SCOPE_PROFILER_
+#endif  // !PACK_LIBRARY_SCOPE_PROFILER

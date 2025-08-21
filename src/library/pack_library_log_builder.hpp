@@ -1,57 +1,58 @@
 #pragma once
 
-#ifndef _PACK_LIBRARY_LOG_BUILDER_
-#define _PACK_LIBRARY_LOG_BUILDER_
+#ifndef PACK_LIBRARY_LOG_BUILDER
+#define PACK_LIBRARY_LOG_BUILDER
 
 #include <atomic>
-#include <boost/system/error_code.hpp>
 #include <chrono>
 #include <string>
 #include <string_view>
+
+#include <boost/system/error_code.hpp>
 
 namespace pack {
 namespace library {
 
 class log_builder final {
  public:
-  explicit log_builder(const std::string_view pc_FuncSig) noexcept;
+  explicit log_builder(const std::string_view c_funcsig) noexcept;
   /* virtual */ ~log_builder() noexcept;
 
  public:
-  static void msf_init() noexcept;
-  static void msf_destroy() noexcept;
-
-  static bool msf_is_initialized() noexcept;
-
-  static void msf_log(const std::string_view pc_Tag,
-                      const std::string_view pc_Message,
-                      const boost::system::error_code pc_ErrorCode) noexcept;
-  static void msf_async_log(
-      const std::string_view pc_Tag, const std::string_view pc_Message,
-      const boost::system::error_code pc_ErrorCode) noexcept;
-
- private:
-  static std::string msf_create_body(
-      const std::string_view pc_Tag, const std::string_view pc_Message,
-      const boost::system::error_code pc_ErrorCode) noexcept;
-
- private:
-  const std::chrono::steady_clock::time_point mc_StartTime;
-
- private:
-  static std::atomic<bool> msv_IsInitialized;
-  static std::atomic<bool> msv_IsNextSectionClosed;
+  explicit log_builder(const log_builder& c_other) noexcept = delete;
+  explicit log_builder(log_builder&& otherRLink) noexcept = delete;
 
  public:
-  explicit log_builder(const log_builder& pcl_Other) noexcept = delete;
-  explicit log_builder(log_builder&& pr_Other) noexcept = delete;
+  log_builder& operator=(const log_builder& c_other) noexcept = delete;
+  log_builder& operator=(log_builder&& otherRLink) noexcept = delete;
 
  public:
-  log_builder& operator=(const log_builder& pcl_Other) noexcept = delete;
-  log_builder& operator=(log_builder&& pr_Other) noexcept = delete;
+  static void init() noexcept;
+  static void destroy() noexcept;
+
+  static bool is_initialized() noexcept;
+
+  static void log(const std::string_view c_tag,
+                  const std::string_view c_message,
+                  const boost::system::error_code c_errorCode) noexcept;
+  static void async(const std::string_view c_tag,
+                    const std::string_view c_message,
+                    const boost::system::error_code c_errorCode) noexcept;
+
+ private:
+  static std::string create_body(
+      const std::string_view c_tag, const std::string_view c_message,
+      const boost::system::error_code c_errorCode) noexcept;
+
+ private:
+  const std::chrono::steady_clock::time_point mc_startTime;
+
+ private:
+  static std::atomic<bool> ms_isInitialized;
+  static std::atomic<bool> ms_isNextSectionClosed;
 };
 
 }  // namespace library
 }  // namespace pack
 
-#endif  // !_PACK_LIBRARY_LOG_BUILDER_
+#endif  // !PACK_LIBRARY_LOG_BUILDER
