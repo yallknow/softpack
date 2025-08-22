@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "pack_client_canvas.hpp"
+
 namespace pack {
 namespace client {
 
@@ -27,12 +29,10 @@ class app final {
  private:
   void main_loop() noexcept;
   void poll_events() noexcept;
-  void handle_viewport() noexcept;
-  void draw_viewport() noexcept;
 
  private:
   sf::RenderWindow m_window;
-  sf::RenderTexture m_texture;
+  canvas m_canvas;
 };
 
 }  // namespace client

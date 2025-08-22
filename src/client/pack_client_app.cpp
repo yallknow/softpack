@@ -24,11 +24,11 @@ const sf::VideoMode gsc_VideoMode{gsc_WindowWidth, gsc_WindowHeight};
 
 }  // namespace
 
-app::app() noexcept : m_window{gsc_VideoMode, gsc_WindowTitle}, m_texture{} {
+app::app() noexcept : m_window{gsc_VideoMode, gsc_WindowTitle}, m_canvas{} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_window.setFramerateLimit(gsc_WindowFramerateLimit);
-  this->m_texture.create(gsc_WindowWidth, gsc_WindowHeight);
+  this->m_canvas.get_texture().create(gsc_WindowWidth, gsc_WindowHeight);
 }
 
 app::~app() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
@@ -60,12 +60,19 @@ void app::main_loop() noexcept {
       break;
     }
 
-    ImGui::SFML::Update(this->m_window, deltaClock.restart());
+    sf::Time dt = deltaClock.restart();
+    ImGui::SFML::Update(this->m_window, dt);
 
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->handle_viewport();
+    this->m_canvas.tick(dt.asSeconds());
+    this->m_canvas.draw();
+
+    if (ImGui::Begin(gsc_ViewportTitle.c_str())) {
+      ImGui::Image(this->m_canvas.get_texture());
+    }
+    ImGui::End();
 
     ImGui::SFML::Render(this->m_window);
 
@@ -88,30 +95,6 @@ void app::poll_events() noexcept {
       }
     }
   }
-}
-
-void app::handle_viewport() noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_texture.clear(sf::Color::Black);
-
-  this->draw_viewport();
-
-  if (ImGui::Begin(gsc_ViewportTitle.c_str())) {
-    ImGui::Image(this->m_texture);
-  }
-  ImGui::End();
-}
-
-void app::draw_viewport() noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  sf::CircleShape shape(50.0f);
-  shape.setFillColor(sf::Color{150, 50, 250});
-  shape.setOutlineThickness(10.0f);
-  shape.setOutlineColor(sf::Color{250, 150, 100});
-
-  this->m_texture.draw(shape);
 }
 
 }  // namespace client
