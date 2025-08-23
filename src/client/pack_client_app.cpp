@@ -38,6 +38,7 @@ bool app::start() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   ImGui::SFML::Init(this->m_window);
+  PACK_LIBRARY_LOG_INFO("ImGui::SFML initialized.");
 
   ImGuiIO& ioLink = ImGui::GetIO();
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -45,6 +46,7 @@ bool app::start() noexcept {
   this->main_loop();
 
   ImGui::SFML::Shutdown();
+  PACK_LIBRARY_LOG_INFO("ImGui::SFML shut down.");
 
   return true;
 }
@@ -58,16 +60,20 @@ void app::main_loop() noexcept {
     this->poll_events();
 
     if (!this->m_window.isOpen()) {
+      PACK_LIBRARY_LOG_INFO("The window was closed by an event.");
       break;
     }
 
-    sf::Time dt = deltaClock.restart();
-    ImGui::SFML::Update(this->m_window, dt);
+    const sf::Time c_dt = deltaClock.restart();
+    const float c_dt_seconds = c_dt.asSeconds();
+    PACK_LIBRARY_LOG_INFO("Delta time =" + std::to_string(c_dt_seconds) + ".");
+
+    ImGui::SFML::Update(this->m_window, c_dt);
 
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->m_viewport.tick(dt.asSeconds());
+    this->m_viewport.tick(c_dt_seconds);
     this->m_viewport.draw();
 
     if (ImGui::Begin(gsc_viewportTitle.data())) {
@@ -91,6 +97,7 @@ void app::poll_events() noexcept {
 
     switch (event.type) {
       case sf::Event::Closed: {
+        PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received.");
         this->m_window.close();
         break;
       }

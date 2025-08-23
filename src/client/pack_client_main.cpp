@@ -7,14 +7,19 @@
 
 #include "pack_client_app.hpp"
 
+namespace pack {
+namespace client {
+
 namespace {
 
 constexpr std::string_view gsc_logDirectory{"log/client/"};
 
-int client_main() {
+}  // namespace
+
+int main() {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  pack::client::app app{};
+  app app{};
 
   if (!app.start()) {
     PACK_LIBRARY_LOG_ERROR("Can't start client!");
@@ -27,10 +32,11 @@ int client_main() {
   return EXIT_SUCCESS;
 }
 
-}  // namespace
+}  // namespace client
+}  // namespace pack
 
 int main() {
-  pack::library::logger::init(gsc_logDirectory);
+  pack::library::logger::init(pack::client::gsc_logDirectory);
 
   if (!pack::library::logger::is_initialized()) {
     return EXIT_FAILURE;
@@ -44,7 +50,7 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  const int c_result{client_main()};
+  const int c_result{pack::client::main()};
 
   pack::library::scope_profiler::destroy();
   pack::library::log_builder::destroy();
