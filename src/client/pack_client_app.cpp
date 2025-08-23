@@ -13,22 +13,23 @@ namespace client {
 
 namespace {
 
-const std::string gsc_WindowTitle{"softpack"};
-const std::string gsc_ViewportTitle{"viewport"};
+const std::string gsc_windowTitle{"softpack"};
+const std::string gsc_viewportTitle{"viewport"};
 
-constexpr std::uint32_t gsc_WindowWidth{1280u};
-constexpr std::uint32_t gsc_WindowHeight{720u};
-constexpr std::uint32_t gsc_WindowFramerateLimit{60u};
+constexpr std::uint32_t gsc_windowWidth{1280u};
+constexpr std::uint32_t gsc_windowHeight{720u};
+constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 
-const sf::VideoMode gsc_VideoMode{gsc_WindowWidth, gsc_WindowHeight};
+const sf::VideoMode gsc_videoMode{gsc_windowWidth, gsc_windowHeight};
 
 }  // namespace
 
-app::app() noexcept : m_window{gsc_VideoMode, gsc_WindowTitle}, m_canvas{} {
+app::app() noexcept
+    : m_window{gsc_videoMode, gsc_windowTitle},
+      m_canvas{gsc_windowWidth, gsc_windowHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_window.setFramerateLimit(gsc_WindowFramerateLimit);
-  this->m_canvas.get_texture().create(gsc_WindowWidth, gsc_WindowHeight);
+  this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
 }
 
 app::~app() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
@@ -69,7 +70,7 @@ void app::main_loop() noexcept {
     this->m_canvas.tick(dt.asSeconds());
     this->m_canvas.draw();
 
-    if (ImGui::Begin(gsc_ViewportTitle.c_str())) {
+    if (ImGui::Begin(gsc_viewportTitle.c_str())) {
       ImGui::Image(this->m_canvas.get_texture());
     }
     ImGui::End();
