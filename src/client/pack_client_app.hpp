@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "pack_client_canvas.hpp"
+#include "../library/pack_library_canvas.hpp"
 
 namespace pack {
 namespace client {
@@ -32,7 +32,7 @@ class app final {
 
  private:
   sf::RenderWindow m_window;
-  canvas m_canvas;
+  library::canvas m_viewport;
 };
 
 }  // namespace client

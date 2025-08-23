@@ -4,7 +4,7 @@
 #include <imgui.h>
 
 #include <cstdint>
-#include <string>
+#include <string_view>
 
 #include "../library/pack_library_preprocessor.hpp"
 
@@ -13,8 +13,8 @@ namespace client {
 
 namespace {
 
-const std::string gsc_windowTitle{"softpack"};
-const std::string gsc_viewportTitle{"viewport"};
+constexpr std::string_view gsc_windowTitle{"softpack"};
+constexpr std::string_view gsc_viewportTitle{"viewport"};
 
 constexpr std::uint32_t gsc_windowWidth{1280u};
 constexpr std::uint32_t gsc_windowHeight{720u};
@@ -25,8 +25,8 @@ const sf::VideoMode gsc_videoMode{gsc_windowWidth, gsc_windowHeight};
 }  // namespace
 
 app::app() noexcept
-    : m_window{gsc_videoMode, gsc_windowTitle},
-      m_canvas{gsc_windowWidth, gsc_windowHeight} {
+    : m_window{gsc_videoMode, gsc_windowTitle.data()},
+      m_viewport{gsc_windowWidth, gsc_windowHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
@@ -67,11 +67,11 @@ void app::main_loop() noexcept {
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->m_canvas.tick(dt.asSeconds());
-    this->m_canvas.draw();
+    this->m_viewport.tick(dt.asSeconds());
+    this->m_viewport.draw();
 
-    if (ImGui::Begin(gsc_viewportTitle.c_str())) {
-      ImGui::Image(this->m_canvas.get_texture());
+    if (ImGui::Begin(gsc_viewportTitle.data())) {
+      ImGui::Image(this->m_viewport.get_texture());
     }
     ImGui::End();
 
