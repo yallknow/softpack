@@ -6,18 +6,20 @@ namespace pack {
 namespace library {
 namespace abstract {
 
-pack::library::abstract::actor::~actor() noexcept {
+actor::actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
+             const std::shared_ptr<sf::Drawable>& c_shapeSPtr) noexcept
+    : m_renderWPtr{c_renderSPtr}, m_shapeSPtr{c_shapeSPtr} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
+
+actor::~actor() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
 void actor::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  std::visit(
-      [this](const auto& shapeLink) -> void {
-        this->m_renderLink.draw(shapeLink);
-      },
-      this->m_shape);
+  if (auto renderSPtr = this->m_renderWPtr.lock(); renderSPtr) {
+    renderSPtr->draw(*this->m_shapeSPtr);
+  }
 }
 
 }  // namespace abstract
