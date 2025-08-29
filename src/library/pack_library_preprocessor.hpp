@@ -40,9 +40,9 @@
 
 #if PACK_LIBRARY_LOGGING_ENABLED || PACK_LIBRARY_ASYNC_LOGGING_ENABLED
 
-#include <string_view>
-
 #include <boost/system/error_code.hpp>
+
+#include <string_view>
 
 #include "pack_library_log_builder.hpp"
 
@@ -71,7 +71,7 @@ static constexpr std::string_view gsc_warningTag{"WARNING"};
   pack::library::log_builder::log(gsc_errorTag, c_message, \
                                   boost::system::error_code{})
 
-#define _PACK_LIBRARY_LOG_ERROR_CODE_(c_message, c_errorCode) \
+#define _PACK_LIBRARY_LOG_ERROR_CODE(c_message, c_errorCode) \
   pack::library::log_builder::log(gsc_errorTag, c_message, c_errorCode)
 
 #define PACK_LIBRARY_LOG_INFO(c_message)                  \

@@ -3,12 +3,12 @@
 #ifndef PACK_LIBRARY_LOG_BUILDER
 #define PACK_LIBRARY_LOG_BUILDER
 
+#include <boost/system/error_code.hpp>
+
 #include <atomic>
 #include <chrono>
 #include <string>
 #include <string_view>
-
-#include <boost/system/error_code.hpp>
 
 namespace pack {
 namespace library {

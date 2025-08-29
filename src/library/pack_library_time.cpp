@@ -1,9 +1,9 @@
 #include "pack_library_time.hpp"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include <algorithm>
 #include <chrono>
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace pack {
 namespace library {
@@ -27,9 +27,10 @@ std::string time::now_underscore() noexcept {
 }
 
 std::uint64_t time::since_epoch() noexcept {
-  return std::chrono::duration_cast<std::chrono::microseconds>(
-             std::chrono::system_clock::now().time_since_epoch())
-      .count();
+  return static_cast<std::uint64_t>(
+      std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::system_clock::now().time_since_epoch())
+          .count());
 }
 
 }  // namespace library
