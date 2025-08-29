@@ -14,6 +14,29 @@ actor::actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
 
 actor::~actor() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
+actor::actor(actor&& otherRLink) noexcept
+    : m_renderWPtr(std::move(otherRLink.m_renderWPtr)),
+      m_shapeSPtr(std::move(otherRLink.m_shapeSPtr)) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  otherRLink.m_renderWPtr.reset();
+  otherRLink.m_shapeSPtr.reset();
+}
+
+actor& actor::operator=(actor&& otherRLink) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  if (this != &otherRLink) {
+    this->m_renderWPtr = std::move(otherRLink.m_renderWPtr);
+    this->m_shapeSPtr = std::move(otherRLink.m_shapeSPtr);
+
+    otherRLink.m_renderWPtr.reset();
+    otherRLink.m_shapeSPtr.reset();
+  }
+
+  return *this;
+}
+
 void actor::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
