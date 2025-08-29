@@ -21,8 +21,6 @@ class actor final : private boost::noncopyable {
 
  public:
   explicit actor(actor&& otherRLink) noexcept;
-
- public:
   actor& operator=(actor&& otherRLink) noexcept;
 
  public:
