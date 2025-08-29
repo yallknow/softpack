@@ -13,11 +13,11 @@ namespace pack {
 namespace library {
 namespace abstract {
 
-class actor final : private boost::noncopyable {
+class actor : private boost::noncopyable {
  public:
   explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-                 const std::shared_ptr<sf::Drawable>& c_shapeSPtr) noexcept;
-  /* virtual */ ~actor() noexcept;
+                 const std::shared_ptr<sf::Shape>& c_shapeSPtr) noexcept;
+  virtual ~actor() noexcept;
 
  public:
   explicit actor(actor&& otherRLink) noexcept;
@@ -25,10 +25,20 @@ class actor final : private boost::noncopyable {
 
  public:
   void draw() const noexcept;
+  void tick(const float c_dt) const noexcept;
+
+ protected:
+  virtual void inner_tick(const float c_dt) const noexcept = 0;
 
  private:
   std::weak_ptr<sf::RenderTarget> m_renderWPtr;
-  std::shared_ptr<sf::Drawable> m_shapeSPtr;
+
+ protected:
+  std::shared_ptr<sf::Shape> m_shapeSPtr;
+
+ protected:
+  static sf::Vector2f ms_minPosition;  // TODO: Add setter
+  static sf::Vector2f ms_maxPosition;  // TODO: Add setter
 };
 
 }  // namespace abstract

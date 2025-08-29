@@ -5,38 +5,39 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <boost/core/noncopyable.hpp>
+
+#include <cstdint>
+#include <memory>
 #include <vector>
+
+#include "pack_library_eternal_actor.hpp"
 
 namespace pack {
 namespace library {
 
-class canvas final {
+class canvas final : private boost::noncopyable {
  public:
-  explicit canvas(const std::uint32_t c_windowWidth,
-                  const std::uint32_t c_windowHeight) noexcept;
+  explicit canvas(const std::uint32_t c_width,
+                  const std::uint32_t c_height) noexcept;
   /* virtual */ ~canvas() noexcept;
 
  public:
-  explicit canvas(const canvas& c_other) noexcept = delete;
   explicit canvas(canvas&& otherRLink) noexcept = delete;
-
- public:
-  canvas& operator=(const canvas& c_other) noexcept = delete;
   canvas& operator=(canvas&& otherRLink) noexcept = delete;
 
  public:
   const sf::RenderTexture& get_texture() const;
 
-  void tick(const float c_dt) noexcept;
-  void draw() noexcept;
+  void tick(const float c_dt) const noexcept;
+  void draw() const noexcept;
 
- public:
-  sf::RenderTexture m_texture;
-  std::vector<sf::RectangleShape> m_shapes;
-  std::vector<sf::Vector2f> m_velocities;
+ private:
+  std::shared_ptr<sf::RenderTexture> m_textureSPtr;
+  std::vector<eternal_actor> m_actors;
 };
 
 }  // namespace library
 }  // namespace pack
 
-#endif  // !PACK_CLIENT_CANVAS
+#endif  // !PACK_LIBRARY_CANVAS
