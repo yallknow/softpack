@@ -4,6 +4,7 @@
 #define PACK_LIBRARY_SCOPE_PROFILER
 
 #include <atomic>
+#include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -11,17 +12,13 @@
 namespace pack {
 namespace library {
 
-class scope_profiler final {
+class scope_profiler final : private boost::noncopyable {
  public:
   explicit scope_profiler(const std::string_view c_funcsig) noexcept;
   /* virtual */ ~scope_profiler() noexcept;
 
  public:
-  explicit scope_profiler(const scope_profiler& c_other) noexcept = delete;
   explicit scope_profiler(scope_profiler&& otherRLink) noexcept = delete;
-
- public:
-  scope_profiler& operator=(const scope_profiler& c_other) noexcept = delete;
   scope_profiler& operator=(scope_profiler&& otherRLink) noexcept = delete;
 
  public:

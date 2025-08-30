@@ -1,8 +1,7 @@
 #include "pack_library_time.hpp"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-
 #include <algorithm>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <chrono>
 
 namespace pack {

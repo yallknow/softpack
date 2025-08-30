@@ -4,6 +4,7 @@
 #define PACK_LIBRARY_LOGGER
 
 #include <atomic>
+#include <boost/core/noncopyable.hpp>
 #include <fstream>
 #include <memory>
 #include <mutex>
@@ -13,18 +14,17 @@
 namespace pack {
 namespace library {
 
-class logger final {
+class logger final : private boost::noncopyable {
  public:
   explicit logger() noexcept = delete;
   /* virtual */ ~logger() noexcept = delete;
 
  public:
-  explicit logger(const logger& c_other) noexcept = delete;
   explicit logger(logger&& otherRLink) noexcept = delete;
+  logger& operator=(logger&& otherRLink) noexcept = delete;
 
  public:
-  logger& operator=(const logger& c_other) noexcept = delete;
-  logger& operator=(logger&& otherRLink) noexcept = delete;
+  static std::string get_pid() noexcept;
 
  public:
   static void init(const std::string_view c_logDirectory) noexcept;
@@ -35,8 +35,6 @@ class logger final {
   static void profile(const std::string_view c_data) noexcept;
   static void log(const std::string_view c_data) noexcept;
   static void async(const std::string_view c_data) noexcept;
-
-  static std::string get_pid() noexcept;
 
  private:
   static std::atomic<bool> ms_isInitialized;

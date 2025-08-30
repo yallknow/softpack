@@ -41,7 +41,6 @@
 #if PACK_LIBRARY_LOGGING_ENABLED || PACK_LIBRARY_ASYNC_LOGGING_ENABLED
 
 #include <boost/system/error_code.hpp>
-
 #include <string_view>
 
 #include "pack_library_log_builder.hpp"

@@ -3,23 +3,20 @@
 #ifndef PACK_LIBRARY_TIME
 #define PACK_LIBRARY_TIME
 
+#include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <string>
 
 namespace pack {
 namespace library {
 
-class time final {
+class time final : private boost::noncopyable {
  public:
   explicit time() noexcept = delete;
   /* virtual */ ~time() noexcept = delete;
 
  public:
-  explicit time(const time& c_other) noexcept = delete;
   explicit time(time&& otherRLink) noexcept = delete;
-
- public:
-  time& operator=(const time& c_other) noexcept = delete;
   time& operator=(time&& otherRLink) noexcept = delete;
 
  public:

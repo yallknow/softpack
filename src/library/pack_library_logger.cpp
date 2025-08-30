@@ -29,6 +29,11 @@ std::unique_ptr<std::mutex> logger::ms_profileMutexUPtr{nullptr};
 std::unique_ptr<std::mutex> logger::ms_logMutexUPtr{nullptr};
 std::unique_ptr<std::mutex> logger::ms_asyncMutexUPtr{nullptr};
 
+std::string logger::get_pid() noexcept {
+  return std::to_string(
+      std::hash<std::thread::id>{}(std::this_thread::get_id()));
+}
+
 void logger::init(const std::string_view c_logDirectory) noexcept {
   if (ms_isInitialized) {
     return;
@@ -123,11 +128,6 @@ void logger::async(const std::string_view c_data) noexcept {
 
   const std::lock_guard<std::mutex> c_lock{*ms_asyncMutexUPtr};
   *ms_asyncStreamUPtr << c_data;
-}
-
-std::string logger::get_pid() noexcept {
-  return std::to_string(
-      std::hash<std::thread::id>{}(std::this_thread::get_id()));
 }
 
 }  // namespace library

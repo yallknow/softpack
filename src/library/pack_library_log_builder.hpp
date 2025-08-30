@@ -3,9 +3,9 @@
 #ifndef PACK_LIBRARY_LOG_BUILDER
 #define PACK_LIBRARY_LOG_BUILDER
 
-#include <boost/system/error_code.hpp>
-
 #include <atomic>
+#include <boost/core/noncopyable.hpp>
+#include <boost/system/error_code.hpp>
 #include <chrono>
 #include <string>
 #include <string_view>
@@ -13,17 +13,13 @@
 namespace pack {
 namespace library {
 
-class log_builder final {
+class log_builder final : private boost::noncopyable {
  public:
   explicit log_builder(const std::string_view c_funcsig) noexcept;
   /* virtual */ ~log_builder() noexcept;
 
  public:
-  explicit log_builder(const log_builder& c_other) noexcept = delete;
   explicit log_builder(log_builder&& otherRLink) noexcept = delete;
-
- public:
-  log_builder& operator=(const log_builder& c_other) noexcept = delete;
   log_builder& operator=(log_builder&& otherRLink) noexcept = delete;
 
  public:
