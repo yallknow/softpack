@@ -4,23 +4,20 @@
 #define PACK_CLIENT_APP
 
 #include <SFML/Graphics.hpp>
+#include <boost/core/noncopyable.hpp>
 
 #include "../library/pack_library_canvas.hpp"
 
 namespace pack {
 namespace client {
 
-class app final {
+class app final : private boost::noncopyable {
  public:
   explicit app() noexcept;
   /* virtual */ ~app() noexcept;
 
  public:
-  explicit app(const app& c_other) noexcept = delete;
   explicit app(app&& otherRLink) noexcept = delete;
-
- public:
-  app& operator=(const app& c_other) noexcept = delete;
   app& operator=(app&& otherRLink) noexcept = delete;
 
  public:

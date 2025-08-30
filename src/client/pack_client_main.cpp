@@ -4,7 +4,6 @@
 #include "../library/pack_library_logger.hpp"
 #include "../library/pack_library_preprocessor.hpp"
 #include "../library/pack_library_scope_profiler.hpp"
-
 #include "pack_client_app.hpp"
 
 namespace pack {
