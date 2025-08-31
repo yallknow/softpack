@@ -11,9 +11,11 @@ namespace pack {
 namespace library {
 
 class actor final : private boost::noncopyable {
- public:
+ protected:
   explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
                  std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept;
+
+ public:
   /*virtual*/ ~actor() noexcept;
 
  public:
