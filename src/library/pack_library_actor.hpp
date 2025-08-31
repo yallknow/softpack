@@ -13,7 +13,7 @@ namespace library {
 class actor final : private boost::noncopyable {
  protected:
   explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-                 std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept;
+                 const std::shared_ptr<sf::Shape>& c_shapeSPtr) noexcept;
 
  public:
   /*virtual*/ ~actor() noexcept;
@@ -30,7 +30,7 @@ class actor final : private boost::noncopyable {
 
  private:
   std::weak_ptr<sf::RenderTarget> m_renderWPtr;
-  std::unique_ptr<sf::Shape> m_shapeUPtr;
+  std::shared_ptr<sf::Shape> m_shapeSPtr;
 };
 
 }  // namespace library
