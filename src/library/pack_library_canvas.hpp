@@ -4,14 +4,12 @@
 #define PACK_LIBRARY_CANVAS
 
 #include <SFML/Graphics.hpp>
-
 #include <boost/core/noncopyable.hpp>
-
 #include <cstdint>
 #include <memory>
 #include <vector>
 
-#include "pack_library_eternal_actor.hpp"
+#include "pack_library_actor.hpp"
 
 namespace pack {
 namespace library {
@@ -29,12 +27,13 @@ class canvas final : private boost::noncopyable {
  public:
   const sf::RenderTexture& get_texture() const;
 
-  void tick(const float c_dt) const noexcept;
+ public:
+  void tick(const float c_dt) noexcept;
   void draw() const noexcept;
 
  private:
   std::shared_ptr<sf::RenderTexture> m_textureSPtr;
-  std::vector<eternal_actor> m_actors;
+  std::vector<actor> m_actors;
 };
 
 }  // namespace library

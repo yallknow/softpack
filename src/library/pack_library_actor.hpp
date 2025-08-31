@@ -7,15 +7,17 @@
 #include <boost/core/noncopyable.hpp>
 #include <memory>
 
+#include "pack_library_mover.hpp"
+#include "pack_library_shape.hpp"
+
 namespace pack {
 namespace library {
 
 class actor final : private boost::noncopyable {
- protected:
-  explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-                 const std::shared_ptr<sf::Shape>& c_shapeSPtr) noexcept;
-
  public:
+  explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
+                 const std::shared_ptr<sf::Shape>& c_shapeSPtr,
+                 const sf::Vector2f& c_velocity) noexcept;
   /*virtual*/ ~actor() noexcept;
 
  public:
@@ -23,14 +25,12 @@ class actor final : private boost::noncopyable {
   actor& operator=(actor&& otherRLink) noexcept;
 
  public:
-  const sf::Shape& get_shape() const;
-
- public:
+  void tick(const float c_dt) noexcept;
   void draw() const noexcept;
 
  private:
-  std::weak_ptr<sf::RenderTarget> m_renderWPtr;
-  std::shared_ptr<sf::Shape> m_shapeSPtr;
+  shape m_shape;
+  mover m_mover;
 };
 
 }  // namespace library

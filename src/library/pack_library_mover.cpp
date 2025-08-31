@@ -6,9 +6,10 @@ namespace pack {
 namespace library {
 
 mover::mover(const std::shared_ptr<sf::Shape>& shapeSPtr,
-             const sf::Vector2f& c_position,
              const sf::Vector2f& c_velocity) noexcept
-    : m_shapeWPtr{shapeSPtr}, m_position{c_position}, m_velocity{c_velocity} {
+    : m_shapeWPtr{shapeSPtr},
+      m_velocity{c_velocity},
+      m_position{shapeSPtr->getPosition()} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
@@ -36,8 +37,8 @@ mover& mover::operator=(mover&& otherRLink) noexcept {
 void mover::tick(const float c_dt) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_position.x += this->m_velocity.x;
-  this->m_position.y += this->m_velocity.y;
+  this->m_position.x += this->m_velocity.x * c_dt;
+  this->m_position.y += this->m_velocity.y * c_dt;
 
   if (auto shapePtr = this->m_shapeWPtr.lock(); shapePtr) {
     shapePtr->setPosition(this->m_position);
