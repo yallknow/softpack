@@ -29,6 +29,7 @@ class canvas final : private boost::noncopyable {
 
  public:
   void tick(const float c_dt) noexcept;
+  void handleCollisions() noexcept;
   void draw() const noexcept;
 
  private:

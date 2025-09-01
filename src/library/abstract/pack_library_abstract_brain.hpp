@@ -1,0 +1,37 @@
+#pragma once
+
+#ifndef PACK_LIBRARY_ABSTRACT_BRAIN
+#define PACK_LIBRARY_ABSTRACT_BRAIN
+
+#include <SFML/Graphics.hpp>
+#include <boost/core/noncopyable.hpp>
+
+namespace pack {
+namespace library {
+namespace abstract {
+
+class brain /*final*/ : private boost::noncopyable {
+ public:
+  explicit brain() noexcept;
+  virtual ~brain() noexcept;
+
+ public:
+  explicit brain(brain&& otherRLink) noexcept;
+  brain& operator=(brain&& otherRLink) noexcept;
+
+ public:
+  sf::Vector2f get_velocity() const noexcept;
+  void set_velocity(const sf::Vector2f& c_velocity) noexcept;
+
+ public:
+  virtual void tick() noexcept = 0;
+
+ protected:
+  sf::Vector2f m_velocity;
+};
+
+}  // namespace abstract
+}  // namespace library
+}  // namespace pack
+
+#endif  // !PACK_LIBRARY_ABSTRACT_BRAIN

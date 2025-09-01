@@ -21,6 +21,9 @@ class shape final : private boost::noncopyable {
   shape& operator=(shape&& otherRLink) noexcept;
 
  public:
+  const sf::Shape& get_shape() const noexcept;
+
+ public:
   void draw() const noexcept;
 
  private:

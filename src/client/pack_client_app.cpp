@@ -74,6 +74,7 @@ void app::main_loop() noexcept {
     ImGui::ShowDemoWindow();
 
     this->m_viewport.tick(c_dt_seconds);
+    this->m_viewport.handleCollisions();
     this->m_viewport.draw();
 
     if (ImGui::Begin(gsc_viewportTitle.data())) {

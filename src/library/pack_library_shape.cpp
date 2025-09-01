@@ -30,10 +30,16 @@ shape& shape::operator=(shape&& otherRLink) noexcept {
   return *this;
 }
 
+const sf::Shape& shape::get_shape() const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  return *this->m_shapeSPtr;
+}
+
 void shape::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (auto renderSPtr = this->m_renderWPtr.lock(); renderSPtr) {
+  if (auto renderSPtr = this->m_renderWPtr.lock()) {
     renderSPtr->draw(*this->m_shapeSPtr);
   }
 }

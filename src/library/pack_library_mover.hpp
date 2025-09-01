@@ -12,8 +12,7 @@ namespace library {
 
 class mover final : private boost::noncopyable {
  public:
-  explicit mover(const std::shared_ptr<sf::Shape>& shapeSPtr,
-                 const sf::Vector2f& c_velocity) noexcept;
+  explicit mover(const std::shared_ptr<sf::Shape>& shapeSPtr) noexcept;
   /*virtual*/ ~mover() noexcept;
 
  public:
@@ -21,13 +20,10 @@ class mover final : private boost::noncopyable {
   mover& operator=(mover&& otherRLink) noexcept;
 
  public:
-  void tick(const float c_dt) noexcept;
+  void tick(const sf::Vector2f& c_velocity, const float c_dt) noexcept;
 
  private:
   std::weak_ptr<sf::Shape> m_shapeWPtr;
-
-  sf::Vector2f m_velocity;
-  sf::Vector2f m_position;
 };
 
 }  // namespace library
