@@ -3,12 +3,15 @@
 #ifndef PACK_LIBRARY_ACTOR
 #define PACK_LIBRARY_ACTOR
 
-#include <SFML/Graphics.hpp>
+#include <box2d/id.h>
+
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <memory>
 
 #include "abstract/pack_library_abstract_brain.hpp"
-#include "pack_library_mover.hpp"
+#include "pack_library_body.hpp"
 #include "pack_library_shape.hpp"
 
 namespace pack {
@@ -16,8 +19,9 @@ namespace library {
 
 class actor final : private boost::noncopyable {
  public:
-  explicit actor(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-                 const std::shared_ptr<sf::Shape>& c_shapeSPtr,
+  explicit actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
+                 std::shared_ptr<sf::Shape>&& shapeSPtr,
+                 const b2BodyId c_bodyId,
                  std::unique_ptr<abstract::brain>&& brainUPtr) noexcept;
   /*virtual*/ ~actor() noexcept;
 
@@ -26,18 +30,12 @@ class actor final : private boost::noncopyable {
   actor& operator=(actor&& otherRLink) noexcept;
 
  public:
-  const sf::Shape& get_shape() const noexcept;
-
-  sf::Vector2f get_velocity() const noexcept;
-  void set_velocity(const sf::Vector2f& c_velocity) noexcept;
-
- public:
   void tick(const float c_dt) noexcept;
   void draw() const noexcept;
 
  private:
   shape m_shape;
-  mover m_mover;
+  body m_body;
   std::unique_ptr<abstract::brain> m_brainUPtr;
 };
 

@@ -1,5 +1,6 @@
 #include "pack_library_wander_brain.hpp"
 
+#include <SFML/System/Vector2.hpp>
 #include <cmath>
 
 #include "pack_library_preprocessor.hpp"
@@ -14,7 +15,7 @@ constexpr float gsc_jitterStep{10.0f};
 const sf::Vector2f gsc_maxVelocity{100.0f, 100.0f};
 const sf::Vector2f gsc_defaultVelocity{0.0f, 0.0f};
 
-inline float jitter() noexcept {
+float jitter() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   // (std::rand() % 3 - 1) -> [-1, 0, 1]

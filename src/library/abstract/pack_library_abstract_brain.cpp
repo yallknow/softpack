@@ -38,12 +38,6 @@ sf::Vector2f brain::get_velocity() const noexcept {
   return this->m_velocity;
 }
 
-void brain::set_velocity(const sf::Vector2f& c_velocity) noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_velocity = c_velocity;
-}
-
 }  // namespace abstract
 }  // namespace library
 }  // namespace pack

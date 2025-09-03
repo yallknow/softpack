@@ -5,16 +5,16 @@
 namespace pack {
 namespace library {
 
-shape::shape(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-             const std::shared_ptr<sf::Shape>& c_shapeSPtr) noexcept
-    : m_renderWPtr{c_renderSPtr}, m_shapeSPtr{c_shapeSPtr} {
+shape::shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
+             std::shared_ptr<sf::Shape>&& shapeSPtr) noexcept
+    : m_renderWPtr{renderWPtr}, m_shapeSPtr{std::move(shapeSPtr)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
 shape::~shape() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
 shape::shape(shape&& otherRLink) noexcept
-    : m_renderWPtr{std::move(otherRLink.m_renderWPtr)},
+    : m_renderWPtr{otherRLink.m_renderWPtr},
       m_shapeSPtr{std::move(otherRLink.m_shapeSPtr)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
@@ -23,17 +23,11 @@ shape& shape::operator=(shape&& otherRLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (this != &otherRLink) {
-    this->m_renderWPtr = std::move(otherRLink.m_renderWPtr);
+    this->m_renderWPtr = otherRLink.m_renderWPtr;
     this->m_shapeSPtr = std::move(otherRLink.m_shapeSPtr);
   }
 
   return *this;
-}
-
-const sf::Shape& shape::get_shape() const noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  return *this->m_shapeSPtr;
 }
 
 void shape::draw() const noexcept {

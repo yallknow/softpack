@@ -3,7 +3,7 @@
 #ifndef PACK_LIBRARY_ABSTRACT_BRAIN
 #define PACK_LIBRARY_ABSTRACT_BRAIN
 
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <boost/core/noncopyable.hpp>
 
 namespace pack {
@@ -21,7 +21,6 @@ class brain /*final*/ : private boost::noncopyable {
 
  public:
   sf::Vector2f get_velocity() const noexcept;
-  void set_velocity(const sf::Vector2f& c_velocity) noexcept;
 
  public:
   virtual void tick() noexcept = 0;

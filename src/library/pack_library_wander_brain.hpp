@@ -17,7 +17,7 @@ class wander_brain final : public abstract::brain {
   explicit wander_brain(wander_brain&& otherRLink) noexcept;
   wander_brain& operator=(wander_brain&& otherRLink) noexcept;
 
- public:
+ private:
   void tick() noexcept override;
 };
 

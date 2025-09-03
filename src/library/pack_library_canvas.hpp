@@ -3,7 +3,9 @@
 #ifndef PACK_LIBRARY_CANVAS
 #define PACK_LIBRARY_CANVAS
 
-#include <SFML/Graphics.hpp>
+#include <box2d/id.h>
+
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <memory>
@@ -29,10 +31,10 @@ class canvas final : private boost::noncopyable {
 
  public:
   void tick(const float c_dt) noexcept;
-  void handleCollisions() noexcept;
   void draw() const noexcept;
 
  private:
+  b2WorldId m_worldId;
   std::shared_ptr<sf::RenderTexture> m_textureSPtr;
   std::vector<actor> m_actors;
 };

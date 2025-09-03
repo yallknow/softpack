@@ -3,7 +3,8 @@
 #ifndef PACK_LIBRARY_SHAPE
 #define PACK_LIBRARY_SHAPE
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <memory>
 
@@ -12,16 +13,13 @@ namespace library {
 
 class shape final : private boost::noncopyable {
  public:
-  explicit shape(const std::shared_ptr<sf::RenderTarget>& c_renderSPtr,
-                 const std::shared_ptr<sf::Shape>& c_shapeSPtr) noexcept;
+  explicit shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
+                 std::shared_ptr<sf::Shape>&& shapeSPtr) noexcept;
   /*virtual*/ ~shape() noexcept;
 
  public:
   explicit shape(shape&& otherRLink) noexcept;
   shape& operator=(shape&& otherRLink) noexcept;
-
- public:
-  const sf::Shape& get_shape() const noexcept;
 
  public:
   void draw() const noexcept;
