@@ -3,8 +3,6 @@
 #ifndef PACK_LIBRARY_CANVAS
 #define PACK_LIBRARY_CANVAS
 
-#include <box2d/id.h>
-
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <cstdint>
@@ -27,14 +25,11 @@ class canvas final : private boost::noncopyable {
   canvas& operator=(canvas&& otherRLink) noexcept = delete;
 
  public:
-  const sf::RenderTexture& get_texture() const;
-
- public:
   void tick(const float c_dt) noexcept;
   void draw() const noexcept;
+  const sf::RenderTexture& get_texture() const;
 
  private:
-  b2WorldId m_worldId;
   std::shared_ptr<sf::RenderTexture> m_textureSPtr;
   std::vector<actor> m_actors;
 };
