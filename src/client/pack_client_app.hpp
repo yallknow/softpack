@@ -3,7 +3,9 @@
 #ifndef PACK_CLIENT_APP
 #define PACK_CLIENT_APP
 
-#include <SFML/Graphics.hpp>
+#include <box2d/id.h>
+
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <boost/core/noncopyable.hpp>
 
 #include "../library/pack_library_canvas.hpp"
@@ -28,6 +30,7 @@ class app final : private boost::noncopyable {
   void poll_events() noexcept;
 
  private:
+  b2WorldId m_worldId;
   sf::RenderWindow m_window;
   library::canvas m_viewport;
 };

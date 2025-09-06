@@ -1,8 +1,13 @@
 #include "pack_client_app.hpp"
 
+#include <box2d/box2d.h>
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
 #include <string_view>
 
@@ -22,17 +27,30 @@ constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 
 const sf::VideoMode gsc_videoMode{gsc_windowWidth, gsc_windowHeight};
 
+constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
+constexpr float gsc_defaultTimestep = 1.0f / 60.f;
+constexpr std::int32_t gsc_iterationsCount = 6;
+
 }  // namespace
 
 app::app() noexcept
-    : m_window{gsc_videoMode, gsc_windowTitle.data()},
+    : m_worldId{},
+      m_window{gsc_videoMode, gsc_windowTitle.data()},
       m_viewport{gsc_windowWidth, gsc_windowHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  b2WorldDef worldDef = b2DefaultWorldDef();
+  worldDef.gravity = gsc_gravity;
+  this->m_worldId = b2CreateWorld(&worldDef);
 
   this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
 }
 
-app::~app() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
+app::~app() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  b2DestroyWorld(this->m_worldId);
+}
 
 bool app::start() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -42,6 +60,8 @@ bool app::start() noexcept {
 
   ImGuiIO& ioLink = ImGui::GetIO();
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+  // TODO: Add canvas filling.
 
   this->main_loop();
 
@@ -54,6 +74,7 @@ bool app::start() noexcept {
 void app::main_loop() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
+  float timeAccumulator = 0.0f;
   sf::Clock deltaClock{};
 
   while (this->m_window.isOpen()) {
@@ -74,6 +95,13 @@ void app::main_loop() noexcept {
     ImGui::ShowDemoWindow();
 
     this->m_viewport.tick(c_dt_seconds);
+    timeAccumulator += c_dt_seconds;
+
+    while (timeAccumulator >= gsc_defaultTimestep) {
+      b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);
+      timeAccumulator -= gsc_defaultTimestep;
+    }
+
     this->m_viewport.draw();
 
     if (ImGui::Begin(gsc_viewportTitle.data())) {
