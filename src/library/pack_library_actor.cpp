@@ -6,9 +6,9 @@ namespace pack {
 namespace library {
 
 actor::actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
-             std::shared_ptr<sf::Shape>&& shapeSPtr, const b2BodyId c_bodyId,
+             std::unique_ptr<sf::Shape>&& shapeUPtr, const b2BodyId c_bodyId,
              std::unique_ptr<abstract::brain>&& brainUPtr) noexcept
-    : m_shape{renderWPtr, std::move(shapeSPtr)},
+    : m_shape{renderWPtr, std::move(shapeUPtr)},
       m_body{c_bodyId},
       m_brainUPtr(std::move(brainUPtr)) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -40,7 +40,10 @@ void actor::tick(const float c_dt) noexcept {
 
   this->m_brainUPtr->tick();
 
-  this->m_body.tick(this->m_brainUPtr->get_velocity());
+  this->m_body.set_veloticy(this->m_brainUPtr->get_velocity());
+
+  this->m_shape.set_position(this->m_body.get_position());
+  this->m_shape.set_rotation(this->m_body.get_rotation());
 }
 
 void actor::draw() const noexcept {

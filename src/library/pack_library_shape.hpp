@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <memory>
 
@@ -14,7 +15,7 @@ namespace library {
 class shape final : private boost::noncopyable {
  public:
   explicit shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
-                 std::shared_ptr<sf::Shape>&& shapeSPtr) noexcept;
+                 std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept;
   /*virtual*/ ~shape() noexcept;
 
  public:
@@ -22,11 +23,13 @@ class shape final : private boost::noncopyable {
   shape& operator=(shape&& otherRLink) noexcept;
 
  public:
+  void set_position(const sf::Vector2f& c_position) const noexcept;
+  void set_rotation(const float c_rotation) const noexcept;
   void draw() const noexcept;
 
  private:
   std::weak_ptr<sf::RenderTarget> m_renderWPtr;
-  std::shared_ptr<sf::Shape> m_shapeSPtr;
+  std::unique_ptr<sf::Shape> m_shapeUPtr;
 };
 
 }  // namespace library

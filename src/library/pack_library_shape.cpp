@@ -6,8 +6,8 @@ namespace pack {
 namespace library {
 
 shape::shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
-             std::shared_ptr<sf::Shape>&& shapeSPtr) noexcept
-    : m_renderWPtr{renderWPtr}, m_shapeSPtr{std::move(shapeSPtr)} {
+             std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept
+    : m_renderWPtr{renderWPtr}, m_shapeUPtr{std::move(shapeUPtr)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
@@ -15,7 +15,7 @@ shape::~shape() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
 shape::shape(shape&& otherRLink) noexcept
     : m_renderWPtr{otherRLink.m_renderWPtr},
-      m_shapeSPtr{std::move(otherRLink.m_shapeSPtr)} {
+      m_shapeUPtr{std::move(otherRLink.m_shapeUPtr)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
@@ -24,17 +24,29 @@ shape& shape::operator=(shape&& otherRLink) noexcept {
 
   if (this != &otherRLink) {
     this->m_renderWPtr = otherRLink.m_renderWPtr;
-    this->m_shapeSPtr = std::move(otherRLink.m_shapeSPtr);
+    this->m_shapeUPtr = std::move(otherRLink.m_shapeUPtr);
   }
 
   return *this;
+}
+
+void shape::set_position(const sf::Vector2f& c_position) const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_shapeUPtr->setPosition(c_position);
+}
+
+void shape::set_rotation(const float c_rotation) const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_shapeUPtr->setRotation(c_rotation);
 }
 
 void shape::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (auto renderSPtr = this->m_renderWPtr.lock()) {
-    renderSPtr->draw(*this->m_shapeSPtr);
+    renderSPtr->draw(*this->m_shapeUPtr);
   }
 }
 
