@@ -15,6 +15,15 @@ canvas::canvas(const std::uint32_t c_width,
 
 canvas::~canvas() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
+void canvas::add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
+                 const b2BodyId c_bodyId,
+                 std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_actors.emplace_back(this->m_textureSPtr, std::move(shapeUPtrRLink),
+                              c_bodyId, std::move(brainUPtrRLink));
+}
+
 void canvas::tick(const float c_dt) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 

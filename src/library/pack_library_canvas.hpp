@@ -25,8 +25,13 @@ class canvas final : private boost::noncopyable {
   canvas& operator=(canvas&& otherRLink) noexcept = delete;
 
  public:
+  // Must be called before the tick & draw loop
+  void add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink, const b2BodyId c_bodyId,
+           std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept;
+
   void tick(const float c_dt) noexcept;
   void draw() const noexcept;
+
   const sf::RenderTexture& get_texture() const;
 
  private:

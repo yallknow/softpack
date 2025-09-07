@@ -22,6 +22,7 @@ class body final : private boost::noncopyable {
 
  public:
   void set_veloticy(const sf::Vector2f& c_velocity) noexcept;
+
   sf::Vector2f get_position() const noexcept;
   float get_rotation() const noexcept;
 
