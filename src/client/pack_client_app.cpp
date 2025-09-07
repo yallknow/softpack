@@ -28,8 +28,8 @@ constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 const sf::VideoMode gsc_videoMode{gsc_windowWidth, gsc_windowHeight};
 
 constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
-constexpr float gsc_defaultTimestep = 1.0f / 60.f;
-constexpr std::int32_t gsc_iterationsCount = 6;
+constexpr float gsc_defaultTimestep{1.0f / 60.f};
+constexpr std::int32_t gsc_iterationsCount{6};
 
 }  // namespace
 
@@ -39,7 +39,7 @@ app::app() noexcept
       m_viewport{gsc_windowWidth, gsc_windowHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  b2WorldDef worldDef = b2DefaultWorldDef();
+  b2WorldDef worldDef{b2DefaultWorldDef()};
   worldDef.gravity = gsc_gravity;
   this->m_worldId = b2CreateWorld(&worldDef);
 
@@ -58,7 +58,7 @@ bool app::start() noexcept {
   ImGui::SFML::Init(this->m_window);
   PACK_LIBRARY_LOG_INFO("ImGui::SFML initialized.");
 
-  ImGuiIO& ioLink = ImGui::GetIO();
+  ImGuiIO& ioLink{ImGui::GetIO()};
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
   // TODO: Add canvas filling.
@@ -74,7 +74,7 @@ bool app::start() noexcept {
 void app::main_loop() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  float timeAccumulator = 0.0f;
+  float timeAccumulator{0.0f};
   sf::Clock deltaClock{};
 
   while (this->m_window.isOpen()) {
@@ -85,8 +85,10 @@ void app::main_loop() noexcept {
       break;
     }
 
-    const sf::Time c_dt = deltaClock.restart();
-    const float c_dt_seconds = c_dt.asSeconds();
+    const sf::Time c_dt{deltaClock.restart()};
+    const float c_dt_seconds{c_dt.asSeconds()};
+    timeAccumulator += c_dt_seconds;
+
     PACK_LIBRARY_LOG_INFO("Delta time =" + std::to_string(c_dt_seconds) + ".");
 
     ImGui::SFML::Update(this->m_window, c_dt);
@@ -95,7 +97,6 @@ void app::main_loop() noexcept {
     ImGui::ShowDemoWindow();
 
     this->m_viewport.tick(c_dt_seconds);
-    timeAccumulator += c_dt_seconds;
 
     while (timeAccumulator >= gsc_defaultTimestep) {
       b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);

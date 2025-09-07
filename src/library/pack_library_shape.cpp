@@ -45,7 +45,7 @@ void shape::set_rotation(const float c_rotation) const noexcept {
 void shape::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (auto renderSPtr = this->m_renderWPtr.lock()) {
+  if (auto renderSPtr{this->m_renderWPtr.lock()}) {
     renderSPtr->draw(*this->m_shapeUPtr);
   }
 }

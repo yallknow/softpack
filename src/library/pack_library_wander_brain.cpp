@@ -40,8 +40,8 @@ wander_brain& wander_brain::operator=(wander_brain&& otherRLink) noexcept {
 }
 
 void wander_brain::tick() noexcept {
-  const float c_newX = this->m_velocity.x + jitter();
-  const float c_newY = this->m_velocity.y + jitter();
+  const float c_newX{this->m_velocity.x + jitter()};
+  const float c_newY{this->m_velocity.y + jitter()};
 
   if (std::abs(c_newX) < gsc_maxVelocity.x) {
     this->m_velocity.x = c_newX;

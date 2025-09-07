@@ -49,15 +49,15 @@ void body::set_veloticy(const sf::Vector2f& c_velocity) noexcept {
 sf::Vector2f body::get_position() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  const b2Transform c_transform = b2Body_GetTransform(this->m_id);
+  const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
   return sf::Vector2f{c_transform.p.x * gsc_scale, c_transform.p.y * gsc_scale};
 }
 
 float body::get_rotation() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  const b2Transform c_transform = b2Body_GetTransform(this->m_id);
-  const float c_angle = std::atan2(c_transform.q.s, c_transform.q.c);
+  const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
+  const float c_angle{std::atan2(c_transform.q.s, c_transform.q.c)};
   return rad2deg(c_angle);
 }
 
