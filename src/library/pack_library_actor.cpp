@@ -6,11 +6,12 @@ namespace pack {
 namespace library {
 
 actor::actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
-             std::unique_ptr<sf::Shape>&& shapeUPtr, const b2BodyId c_bodyId,
-             std::unique_ptr<abstract::brain>&& brainUPtr) noexcept
-    : m_shape{renderWPtr, std::move(shapeUPtr)},
+             std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
+             const b2BodyId c_bodyId,
+             std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept
+    : m_shape{renderWPtr, std::move(shapeUPtrRLink)},
       m_body{c_bodyId},
-      m_brainUPtr(std::move(brainUPtr)) {
+      m_brainUPtr(std::move(brainUPtrRLink)) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 

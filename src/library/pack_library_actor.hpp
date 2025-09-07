@@ -20,9 +20,9 @@ namespace library {
 class actor final : private boost::noncopyable {
  public:
   explicit actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
-                 std::unique_ptr<sf::Shape>&& shapeUPtr,
+                 std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
                  const b2BodyId c_bodyId,
-                 std::unique_ptr<abstract::brain>&& brainUPtr) noexcept;
+                 std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept;
   /*virtual*/ ~actor() noexcept;
 
  public:

@@ -6,8 +6,8 @@ namespace pack {
 namespace library {
 
 shape::shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
-             std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept
-    : m_renderWPtr{renderWPtr}, m_shapeUPtr{std::move(shapeUPtr)} {
+             std::unique_ptr<sf::Shape>&& shapeUPtrRLink) noexcept
+    : m_renderWPtr{renderWPtr}, m_shapeUPtr{std::move(shapeUPtrRLink)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 

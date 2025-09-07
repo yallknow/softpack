@@ -15,7 +15,7 @@ constexpr float gsc_scale{30.0f};
 constexpr float gsc_rad{180.0f};
 constexpr float gsc_pi{3.14159265f};
 
-float rad2deg(const float c_rad) { return c_rad * gsc_rad / gsc_pi; }
+float rad_to_deg(const float c_rad) { return c_rad * gsc_rad / gsc_pi; }
 
 }  // namespace
 
@@ -58,7 +58,7 @@ float body::get_rotation() const noexcept {
 
   const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
   const float c_angle{std::atan2(c_transform.q.s, c_transform.q.c)};
-  return rad2deg(c_angle);
+  return rad_to_deg(c_angle);
 }
 
 }  // namespace library

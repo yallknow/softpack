@@ -15,7 +15,7 @@ namespace library {
 class shape final : private boost::noncopyable {
  public:
   explicit shape(std::weak_ptr<sf::RenderTarget> renderWPtr,
-                 std::unique_ptr<sf::Shape>&& shapeUPtr) noexcept;
+                 std::unique_ptr<sf::Shape>&& shapeUPtrRLink) noexcept;
   /*virtual*/ ~shape() noexcept;
 
  public:
