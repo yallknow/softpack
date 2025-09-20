@@ -9,7 +9,7 @@ namespace library {
 
 namespace {
 
-constexpr float gsc_jitterStep{10.0f};
+constexpr float gsc_jitterStep{1000.0f};
 
 const sf::Vector2f gsc_maxVelocity{100.0f, 100.0f};
 const sf::Vector2f gsc_defaultVelocity{0.0f, 0.0f};
@@ -42,8 +42,8 @@ wander_brain& wander_brain::operator=(wander_brain&& otherRLink) noexcept {
 }
 
 void wander_brain::tick(const float c_dt) noexcept {
-  const float c_newX{(this->m_velocity.x + jitter()) * c_dt};
-  const float c_newY{(this->m_velocity.y + jitter()) * c_dt};
+  const float c_newX{this->m_velocity.x + (jitter() * c_dt)};
+  const float c_newY{this->m_velocity.y + (jitter() * c_dt)};
 
   if (std::abs(c_newX) < gsc_maxVelocity.x) {
     this->m_velocity.x = c_newX;
