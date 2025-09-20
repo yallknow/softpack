@@ -4,20 +4,11 @@
 
 #include <cmath>
 
+#include "pack_library_math.hpp"
 #include "pack_library_preprocessor.hpp"
 
 namespace pack {
 namespace library {
-
-namespace {
-
-constexpr float gsc_scale{30.0f};
-constexpr float gsc_rad{180.0f};
-constexpr float gsc_pi{3.14159265f};
-
-float rad_to_deg(const float c_rad) { return c_rad * gsc_rad / gsc_pi; }
-
-}  // namespace
 
 body::body(const b2BodyId c_id) noexcept : m_id{c_id} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
