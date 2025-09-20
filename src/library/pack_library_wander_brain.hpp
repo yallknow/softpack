@@ -20,7 +20,7 @@ class wander_brain final : public abstract::brain {
   wander_brain& operator=(wander_brain&& otherRLink) noexcept;
 
  private:
-  void tick() noexcept override;
+  void tick(const float c_dt) noexcept override;
 };
 
 }  // namespace library

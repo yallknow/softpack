@@ -23,7 +23,7 @@ class brain /*final*/ : private boost::noncopyable {
   sf::Vector2f get_velocity() const noexcept;
 
  public:
-  virtual void tick() noexcept = 0;
+  virtual void tick(const float c_dt) noexcept = 0;
 
  protected:
   sf::Vector2f m_velocity;

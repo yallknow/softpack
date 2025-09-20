@@ -30,7 +30,7 @@ class actor final : private boost::noncopyable {
   actor& operator=(actor&& otherRLink) noexcept;
 
  public:
-  void tick() noexcept;
+  void tick(const float c_dt) noexcept;
   void draw() const noexcept;
 
  private:
