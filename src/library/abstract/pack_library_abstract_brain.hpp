@@ -12,7 +12,7 @@ namespace abstract {
 
 class brain /*final*/ : private boost::noncopyable {
  public:
-  explicit brain() noexcept;
+  explicit brain(const sf::Vector2f& c_velocity) noexcept;
   virtual ~brain() noexcept;
 
  public:

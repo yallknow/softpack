@@ -6,13 +6,7 @@ namespace pack {
 namespace library {
 namespace abstract {
 
-namespace {
-
-const sf::Vector2f gsc_defaultVelocity{0.0f, 0.0f};
-
-}  // namespace
-
-brain::brain() noexcept : m_velocity{gsc_defaultVelocity} {
+brain::brain(const sf::Vector2f& c_velocity) noexcept : m_velocity{c_velocity} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 

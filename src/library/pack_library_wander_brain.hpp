@@ -3,6 +3,8 @@
 #ifndef PACK_LIBRARY_WANDER_BRAIN
 #define PACK_LIBRARY_WANDER_BRAIN
 
+#include <SFML/System/Vector2.hpp>
+
 #include "abstract/pack_library_abstract_brain.hpp"
 
 namespace pack {
@@ -10,7 +12,7 @@ namespace library {
 
 class wander_brain final : public abstract::brain {
  public:
-  explicit wander_brain() noexcept;
+  explicit wander_brain(const sf::Vector2f& c_velocity) noexcept;
   /*virtual*/ ~wander_brain() noexcept;
 
  public:

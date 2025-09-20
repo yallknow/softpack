@@ -1,6 +1,5 @@
 #include "pack_library_wander_brain.hpp"
 
-#include <SFML/System/Vector2.hpp>
 #include <cmath>
 
 #include "pack_library_preprocessor.hpp"
@@ -24,7 +23,10 @@ float jitter() noexcept {
 
 }  // namespace
 
-wander_brain::wander_brain() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
+wander_brain::wander_brain(const sf::Vector2f& c_velocity) noexcept
+    : abstract::brain(c_velocity) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+}
 
 wander_brain::~wander_brain() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
