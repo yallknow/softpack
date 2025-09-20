@@ -1,4 +1,4 @@
-#include "pack_client_app.hpp"
+﻿#include "pack_client_app.hpp"
 
 #include <box2d/box2d.h>
 #include <imgui-SFML.h>
@@ -20,23 +20,35 @@ namespace {
 
 constexpr std::string_view gsc_windowTitle{"softpack"};
 constexpr std::string_view gsc_viewportTitle{"viewport"};
+constexpr std::string_view gsc_minimapTitle{"minimap"};
 
+constexpr std::uint32_t gsc_windowFramerateLimit{60u};
+constexpr std::uint32_t gsc_borderHeight{35u};
 constexpr std::uint32_t gsc_windowWidth{1280u};
 constexpr std::uint32_t gsc_windowHeight{720u};
-constexpr std::uint32_t gsc_windowFramerateLimit{60u};
+constexpr std::uint32_t gsc_minimapWidth{200u};
+constexpr std::uint32_t gsc_minimapHeight{150u};
+constexpr std::uint32_t gsc_viewportWidth{gsc_windowWidth - gsc_minimapWidth};
+constexpr std::uint32_t gsc_viewportHeight{gsc_windowHeight - gsc_borderHeight};
 
-const sf::VideoMode gsc_videoMode{gsc_windowWidth, gsc_windowHeight};
+constexpr std::int32_t gsc_iterationsCount{6};
+
+constexpr ImVec2 gsc_minimapSize{gsc_minimapWidth, gsc_minimapHeight};
+constexpr ImVec2 gsc_minmapLowerLeft{0, 1};
+constexpr ImVec2 gsc_minmapUpperRight{1, 0};
+
+const sf::VideoMode gsc_windowVideoMode{gsc_windowWidth, gsc_windowHeight};
 
 constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
-constexpr float gsc_defaultTimestep{1.0f / 60.f};
-constexpr std::int32_t gsc_iterationsCount{6};
+
+constexpr float gsc_defaultTimestep{1.0f / 600.f};
 
 }  // namespace
 
 app::app() noexcept
     : m_worldId{},
-      m_window{gsc_videoMode, gsc_windowTitle.data()},
-      m_viewport{gsc_windowWidth, gsc_windowHeight} {
+      m_window{gsc_windowVideoMode, gsc_windowTitle.data()},
+      m_viewport{gsc_viewportWidth, gsc_viewportHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -107,6 +119,15 @@ void app::main_loop() noexcept {
 
     if (ImGui::Begin(gsc_viewportTitle.data())) {
       ImGui::Image(this->m_viewport.get_texture());
+    }
+    ImGui::End();
+
+    if (ImGui::Begin(gsc_minimapTitle.data())) {
+      const ImTextureID c_textureId = static_cast<ImTextureID>(
+          this->m_viewport.get_texture().getTexture().getNativeHandle());
+
+      ImGui::Image(c_textureId, gsc_minimapSize, gsc_minmapLowerLeft,
+                   gsc_minmapUpperRight);
     }
     ImGui::End();
 

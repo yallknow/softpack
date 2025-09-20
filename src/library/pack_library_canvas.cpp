@@ -1,5 +1,7 @@
 #include "pack_library_canvas.hpp"
 
+#include <SFML/Graphics/Color.hpp>
+
 #include "pack_library_preprocessor.hpp"
 
 namespace pack {
