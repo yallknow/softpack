@@ -24,7 +24,7 @@ constexpr std::string_view gsc_minimapTitle{"minimap"};
 
 constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 constexpr std::uint32_t gsc_borderHeight{35u};
-constexpr std::uint32_t gsc_windowWidth{1280u};
+constexpr std::uint32_t gsc_windowWidth{1'280u};
 constexpr std::uint32_t gsc_windowHeight{720u};
 constexpr std::uint32_t gsc_minimapWidth{200u};
 constexpr std::uint32_t gsc_minimapHeight{150u};

@@ -9,9 +9,9 @@ namespace library {
 
 namespace {
 
-constexpr float gsc_jitterStep{1000.0f};
+constexpr float gsc_jitterStep{10'000.0f};
 
-const sf::Vector2f gsc_maxVelocity{100.0f, 100.0f};
+const sf::Vector2f gsc_maxVelocity{1'000.0f, 1'000.0f};
 const sf::Vector2f gsc_defaultVelocity{0.0f, 0.0f};
 
 float jitter() noexcept {
