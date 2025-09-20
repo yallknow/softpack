@@ -36,12 +36,14 @@ actor& actor::operator=(actor&& otherRLink) noexcept {
   return *this;
 }
 
-void actor::tick(const float c_dt) noexcept {
+void actor::tick() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_brainUPtr->tick();
+  if (this->m_brainUPtr) {
+    this->m_brainUPtr->tick();
 
-  this->m_body.set_veloticy(this->m_brainUPtr->get_velocity());
+    this->m_body.set_veloticy(this->m_brainUPtr->get_velocity());
+  }
 
   this->m_shape.set_position(this->m_body.get_position());
   this->m_shape.set_rotation(this->m_body.get_rotation());
