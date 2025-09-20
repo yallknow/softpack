@@ -45,9 +45,13 @@
 
 #include "pack_library_log_builder.hpp"
 
-static constexpr std::string_view gsc_errorTag{"ERROR"};
-static constexpr std::string_view gsc_infoTag{"INFO"};
-static constexpr std::string_view gsc_warningTag{"WARNING"};
+namespace {
+
+constexpr std::string_view gsc_errorTag{"ERROR"};
+constexpr std::string_view gsc_infoTag{"INFO"};
+constexpr std::string_view gsc_warningTag{"WARNING"};
+
+}  // namespace
 
 #endif  // PACK_LIBRARY_LOGGING_ENABLED || PACK_LIBRARY_ASYNC_LOGGING_ENABLED
 

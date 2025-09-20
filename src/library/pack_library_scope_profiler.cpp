@@ -6,14 +6,6 @@
 namespace pack {
 namespace library {
 
-namespace {
-
-constexpr std::string_view gsc_cat{};
-constexpr std::string_view gsc_ph{"X"};
-constexpr std::string_view gsc_tid{"0"};
-
-}  // namespace
-
 std::atomic<bool> scope_profiler::ms_isInitialized{false};
 
 scope_profiler::scope_profiler(const std::string_view c_funcsig) noexcept
@@ -50,7 +42,6 @@ std::string scope_profiler::record(const std::uint64_t& c_dur) const noexcept {
   std::string record{};
 
   record += ", { \"cat\": \"";
-  record += gsc_cat;
 
   record += "\", \"dur\": ";
   record += std::to_string(c_dur);
@@ -58,14 +49,12 @@ std::string scope_profiler::record(const std::uint64_t& c_dur) const noexcept {
   record += ", \"name\": \"";
   record += this->mc_name;
 
-  record += "\", \"ph\": \"";
-  record += gsc_ph;
+  record += "\", \"ph\": \"X";
 
   record += "\", \"pid\": ";
   record += this->m_pid;
 
-  record += ", \"tid\": ";
-  record += gsc_tid;
+  record += ", \"tid\": 0";
 
   record += ", \"ts\": ";
   record += std::to_string(this->m_ts) + "}";
