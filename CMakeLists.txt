@@ -11,17 +11,19 @@ endif()
 
 set(BOOST_LIBS boost::boost)
 set(BOX2D_LIBS box2d::box2d)
+set(JSONCPP_LIBS JsonCpp::JsonCpp)
 set(IMGUI_LIBS imgui::imgui)
 set(IMGUI_SFML_LIBS ImGui-SFML::ImGui-SFML)
 set(SFML_LIBS sfml::sfml)
 
 find_package(Boost REQUIRED COMPONENTS ${BOOST_LIBS})
 find_package(box2d REQUIRED COMPONENTS ${BOX2D_LIBS})
+find_package(jsoncpp REQUIRED COMPONENTS ${JSONCPP_LIBS})
 find_package(imgui REQUIRED COMPONENTS ${IMGUI_LIBS})
-find_package(ImGui-SFML REQUIRED COMPONENTS ${IMGUI-SFML_LIBS})
+find_package(ImGui-SFML REQUIRED COMPONENTS ${IMGUI_SFML_LIBS})
 find_package(SFML REQUIRED COMPONENTS ${SFML_LIBS})
 
-set(CONAN_LIBS ${BOOST_LIBS} ${BOX2D_LIBS} ${IMGUI_LIBS} ${IMGUI_SFML_LIBS} ${SFML_LIBS})
+set(CONAN_LIBS ${BOOST_LIBS} ${BOX2D_LIBS} ${JSONCPP_LIBS} ${IMGUI_LIBS} ${IMGUI_SFML_LIBS} ${SFML_LIBS})
 
 set(SOURCES "*.cpp")
 set(HEADERS "*.hpp")
