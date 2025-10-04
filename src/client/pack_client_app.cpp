@@ -8,6 +8,7 @@
 #include <imgui.h>
 
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -22,7 +23,6 @@
 #include "../library/pack_library_preprocessor.hpp"
 #include "../library/pack_library_scene_entity.hpp"
 #include "../library/pack_library_scene_loader.hpp"
-#include "../library/pack_library_wander_brain.hpp"
 
 namespace pack {
 namespace client {
@@ -104,18 +104,22 @@ void app::fill_viewport() noexcept {
 
     if (sf::CircleShape* const circlePtr =
             dynamic_cast<sf::CircleShape*>(entity.m_shapeUPtr.get())) {
-      b2Circle circle{};
-      circle.center = {0.0f, 0.0f};
-      circle.radius = circlePtr->getRadius() / library::gsc_scale;
+      b2Circle circle{b2Vec2{0.0f, 0.0f},
+                      circlePtr->getRadius() / library::gsc_scale};
 
       b2CreateCircleShape(bodyId, &entity.m_shapeDef, &circle);
+    } else if (sf::RectangleShape* const rectanglePtr =
+                   dynamic_cast<sf::RectangleShape*>(
+                       entity.m_shapeUPtr.get())) {
+      b2Polygon polygon{
+          b2MakeBox(rectanglePtr->getOrigin().x / library::gsc_scale,
+                    rectanglePtr->getOrigin().y / library::gsc_scale)};
+
+      b2CreatePolygonShape(bodyId, &entity.m_shapeDef, &polygon);
     }
 
-    auto brainUPtr{
-        std::make_unique<library::wander_brain>(sf::Vector2f{0.0f, 0.0f})};
-
     this->m_viewport.add(std::move(entity.m_shapeUPtr), bodyId,
-                         std::move(brainUPtr));
+                         std::move(entity.m_brainUPtr));
   }
 }
 
