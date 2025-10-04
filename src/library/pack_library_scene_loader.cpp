@@ -1,6 +1,7 @@
 #include "pack_library_scene_loader.hpp"
 
-#include <json/json.h>
+#include <json/reader.h>
+#include <json/value.h>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -94,11 +95,6 @@ bool scene_loader::load(
     return false;
   } catch (const Json::RuntimeError& c_exception) {
     PACK_LIBRARY_LOG_ERROR("Exception Json::RuntimeError:" +
-                           std::string{c_exception.what()});
-
-    return false;
-  } catch (const std::ios_base::failure& c_exception) {
-    PACK_LIBRARY_LOG_ERROR("Exception std::ios_base::failure:" +
                            std::string{c_exception.what()});
 
     return false;
