@@ -12,7 +12,6 @@ namespace {
 constexpr float gsc_jitterStep{10'000.0f};
 
 const sf::Vector2f gsc_maxVelocity{1'000.0f, 1'000.0f};
-const sf::Vector2f gsc_defaultVelocity{0.0f, 0.0f};
 
 float jitter() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -47,14 +46,10 @@ void wander_brain::tick(const float c_dt) noexcept {
 
   if (std::abs(c_newX) < gsc_maxVelocity.x) {
     this->m_velocity.x = c_newX;
-  } else {
-    this->m_velocity.x = gsc_defaultVelocity.x;
   }
 
   if (std::abs(c_newY) < gsc_maxVelocity.y) {
     this->m_velocity.y = c_newY;
-  } else {
-    this->m_velocity.y = gsc_defaultVelocity.y;
   }
 }
 

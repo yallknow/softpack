@@ -33,20 +33,26 @@ shape& shape::operator=(shape&& otherRLink) noexcept {
 void shape::set_position(const sf::Vector2f& c_position) const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_shapeUPtr->setPosition(c_position);
+  if (this->m_shapeUPtr) {
+    this->m_shapeUPtr->setPosition(c_position);
+  }
 }
 
 void shape::set_rotation(const float c_rotation) const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_shapeUPtr->setRotation(c_rotation);
+  if (this->m_shapeUPtr) {
+    this->m_shapeUPtr->setRotation(c_rotation);
+  }
 }
 
 void shape::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (auto renderSPtr{this->m_renderWPtr.lock()}) {
-    renderSPtr->draw(*this->m_shapeUPtr);
+    if (this->m_shapeUPtr) {
+      renderSPtr->draw(*this->m_shapeUPtr);
+    }
   }
 }
 
