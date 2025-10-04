@@ -30,9 +30,13 @@ wander_brain::wander_brain(const sf::Vector2f& c_velocity) noexcept
 wander_brain::~wander_brain() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
 wander_brain::wander_brain(wander_brain&& otherRLink) noexcept
-    : abstract::brain(std::move(otherRLink)) {}
+    : abstract::brain(std::move(otherRLink)) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+}
 
 wander_brain& wander_brain::operator=(wander_brain&& otherRLink) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   if (this != &otherRLink) {
     abstract::brain::operator=(std::move(otherRLink));
   }
@@ -41,6 +45,8 @@ wander_brain& wander_brain::operator=(wander_brain&& otherRLink) noexcept {
 }
 
 void wander_brain::tick(const float c_dt) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   const float c_newX{this->m_velocity.x + (jitter() * c_dt)};
   const float c_newY{this->m_velocity.y + (jitter() * c_dt)};
 

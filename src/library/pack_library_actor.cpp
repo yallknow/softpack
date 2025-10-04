@@ -11,7 +11,7 @@ actor::actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
              std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept
     : m_shape{renderWPtr, std::move(shapeUPtrRLink)},
       m_body{c_bodyId},
-      m_brainUPtr(std::move(brainUPtrRLink)) {
+      m_brainUPtr{std::move(brainUPtrRLink)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 

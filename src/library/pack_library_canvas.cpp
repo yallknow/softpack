@@ -9,7 +9,7 @@ namespace library {
 
 canvas::canvas(const std::uint32_t c_width,
                const std::uint32_t c_height) noexcept
-    : m_textureSPtr{std::make_shared<sf::RenderTexture>()} {
+    : m_textureSPtr{std::make_shared<sf::RenderTexture>()}, m_actors{} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_textureSPtr->create(c_width, c_height);
