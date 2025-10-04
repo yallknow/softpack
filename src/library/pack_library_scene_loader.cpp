@@ -1,5 +1,7 @@
 #include "pack_library_scene_loader.hpp"
 
+#include <box2d/math_functions.h>
+#include <box2d/types.h>
 #include <json/reader.h>
 #include <json/value.h>
 
@@ -10,6 +12,7 @@
 #include <fstream>
 #include <memory>
 
+#include "pack_library_math.hpp"
 #include "pack_library_preprocessor.hpp"
 
 namespace pack {
@@ -24,10 +27,12 @@ void load_circles(const Json::Value& c_root,
   }
 
   for (const Json::Value& c_circle : c_root["circles"]) {
-    if (!c_circle.isMember("radius") || !c_circle["radius"].isNumeric()) {
+    if (!c_circle.isMember("radius") || !c_circle["radius"].isNumeric() ||
+        !c_circle.isMember("body")) {
       continue;  // Required
     }
 
+    // Shape section
     auto shapeUPtr{
         std::make_unique<sf::CircleShape>(c_circle["radius"].asFloat())};
 
@@ -63,7 +68,49 @@ void load_circles(const Json::Value& c_root,
       }
     }
 
-    entitiesLink.emplace_back(std::move(shapeUPtr), b2BodyId{}, nullptr);
+    // Body section
+    const Json::Value& c_body{c_circle["body"]};
+
+    b2BodyDef bodyDef{b2DefaultBodyDef()};
+    b2ShapeDef shapeDef{b2DefaultShapeDef()};
+
+    if (c_body.isMember("type") && c_body["type"].isInt()) {
+      bodyDef.type = static_cast<b2BodyType>(c_body["type"].asInt());
+    }
+
+    if (c_body.isMember("position")) {
+      const Json::Value& c_position{c_body["position"]};
+
+      if (c_position.isMember("x") && c_position["x"].isNumeric() &&
+          c_position.isMember("y") && c_position["y"].isNumeric()) {
+        bodyDef.position = b2Vec2{c_position["x"].asFloat() / gsc_scale,
+                                  c_position["y"].asFloat() / gsc_scale};
+      }
+    }
+
+    if (c_body.isMember("linearDamping") &&
+        c_body["linearDamping"].isNumeric()) {
+      bodyDef.linearDamping = c_body["linearDamping"].asFloat();
+    }
+
+    if (c_body.isMember("angularDamping") &&
+        c_body["angularDamping"].isNumeric()) {
+      bodyDef.angularDamping = c_body["angularDamping"].asFloat();
+    }
+
+    if (c_body.isMember("density") && c_body["density"].isNumeric()) {
+      shapeDef.density = c_body["density"].asFloat();
+    }
+
+    if (c_body.isMember("friction") && c_body["friction"].isNumeric()) {
+      shapeDef.material.friction = c_body["friction"].asFloat();
+    }
+
+    if (c_body.isMember("restitution") && c_body["restitution"].isNumeric()) {
+      shapeDef.material.restitution = c_body["restitution"].asFloat();
+    }
+
+    entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef, nullptr);
   }
 }
 

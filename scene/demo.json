@@ -14,6 +14,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -30,6 +42,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -46,6 +70,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -62,6 +98,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -78,6 +126,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -94,6 +154,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -110,6 +182,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -126,6 +210,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -142,6 +238,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     },
     {
@@ -158,6 +266,18 @@
         "r": 100,
         "g": 200,
         "b": 150
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 300.0
+        },
+        "linearDamping": 2.0,
+        "angularDamping": 2.0,
+        "density": 1.0,
+        "friction": 1.2,
+        "restitution": 0.4
       }
     }
   ]

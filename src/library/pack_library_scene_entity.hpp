@@ -3,7 +3,7 @@
 #ifndef PACK_LIBRARY_SCENE_ENTITY
 #define PACK_LIBRARY_SCENE_ENTITY
 
-#include <box2d/id.h>
+#include <box2d/types.h>
 
 #include <SFML/Graphics/Shape.hpp>
 #include <boost/core/noncopyable.hpp>
@@ -17,7 +17,8 @@ namespace library {
 class scene_entity final : private boost::noncopyable {
  public:
   explicit scene_entity(
-      std::unique_ptr<sf::Shape>&& shapeUPtrRLink, const b2BodyId c_bodyId,
+      std::unique_ptr<sf::Shape>&& shapeUPtrRLink, const b2BodyDef c_bodyDef,
+      const b2ShapeDef c_shapeDef,
       std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept;
   /* virtual */ ~scene_entity() noexcept;
 
@@ -27,7 +28,8 @@ class scene_entity final : private boost::noncopyable {
 
  public:
   std::unique_ptr<sf::Shape> m_shapeUPtr;
-  b2BodyId m_id;
+  b2BodyDef m_bodyDef;
+  b2ShapeDef m_shapeDef;
   std::unique_ptr<abstract::brain> m_brainUPtr;
 };
 

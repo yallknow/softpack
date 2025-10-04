@@ -2,10 +2,12 @@
 
 #include <box2d/box2d.h>
 #include <box2d/collision.h>
+#include <box2d/math_functions.h>
 #include <box2d/types.h>
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -16,6 +18,7 @@
 #include <string_view>
 #include <vector>
 
+#include "../library/pack_library_math.hpp"
 #include "../library/pack_library_preprocessor.hpp"
 #include "../library/pack_library_scene_entity.hpp"
 #include "../library/pack_library_scene_loader.hpp"
@@ -97,24 +100,16 @@ void app::fill_viewport() noexcept {
   library::scene_loader::load(gsc_scenePath, entities);
 
   for (auto& entity : entities) {
-    b2BodyDef bodyDef{b2DefaultBodyDef()};
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position = {400.0f / 30.0f, 300.0f / 30.0f};
-    bodyDef.linearDamping = 2.0f;
-    bodyDef.angularDamping = 2.0f;
+    b2BodyId bodyId{b2CreateBody(this->m_worldId, &entity.m_bodyDef)};
 
-    b2BodyId bodyId{b2CreateBody(this->m_worldId, &bodyDef)};
+    if (sf::CircleShape* const circlePtr =
+            dynamic_cast<sf::CircleShape*>(entity.m_shapeUPtr.get())) {
+      b2Circle circle{};
+      circle.center = {0.0f, 0.0f};
+      circle.radius = circlePtr->getRadius() / library::gsc_scale;
 
-    b2ShapeDef shapeDef{b2DefaultShapeDef()};
-    shapeDef.density = 1.0f;
-    shapeDef.material.friction = 1.2f;
-    shapeDef.material.restitution = 0.4f;
-
-    b2Circle circle{};
-    circle.center = {0.0f, 0.0f};
-    circle.radius = 20.0f / 30.0f;
-
-    b2CreateCircleShape(bodyId, &shapeDef, &circle);
+      b2CreateCircleShape(bodyId, &entity.m_shapeDef, &circle);
+    }
 
     auto brainUPtr{
         std::make_unique<library::wander_brain>(sf::Vector2f{0.0f, 0.0f})};
