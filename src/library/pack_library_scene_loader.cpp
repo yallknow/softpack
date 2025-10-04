@@ -56,9 +56,13 @@ constexpr std::string_view gsc_restitutionProp{"restitution"};
 
 constexpr std::string_view gsc_brainProp{"brain"};
 constexpr std::string_view gsc_velocityProp{"velocity"};
+constexpr std::string_view gsc_jitterStepProp{"jitterStep"};
+constexpr std::string_view gsc_maxVelocityProp{"maxVelocity"};
 
 constexpr std::string_view gsc_circleShape{"circle"};
 constexpr std::string_view gsc_rectangleShape{"rectangle"};
+
+enum class brain { WANDER = 0 };
 
 bool contains_key(const Json::Value& c_value, const std::string_view key) {
   const bool c_result = c_value.isMember(key.data());
@@ -106,97 +110,114 @@ void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
   if (contains_key(c_entity, gsc_originProp)) {
     const Json::Value& c_origin{c_entity[gsc_originProp.data()]};
 
-    auto x = get_float(c_origin, gsc_xProp);
-    auto y = get_float(c_origin, gsc_yProp);
+    const auto c_x = get_float(c_origin, gsc_xProp);
+    const auto c_y = get_float(c_origin, gsc_yProp);
 
-    if (x && y) {
-      shapeLink.setOrigin(x.value(), y.value());
+    if (c_x && c_y) {
+      shapeLink.setOrigin(c_x.value(), c_y.value());
     }
   }
 
   if (contains_key(c_entity, gsc_positionProp)) {
     const Json::Value& c_position{c_entity[gsc_positionProp.data()]};
 
-    auto x = get_float(c_position, gsc_xProp);
-    auto y = get_float(c_position, gsc_yProp);
+    const auto c_x = get_float(c_position, gsc_xProp);
+    const auto c_y = get_float(c_position, gsc_yProp);
 
-    if (x && y) {
-      shapeLink.setPosition(x.value(), y.value());
+    if (c_x && c_y) {
+      shapeLink.setPosition(c_x.value(), c_y.value());
     }
   }
 
   if (contains_key(c_entity, gsc_colorProp)) {
     const Json::Value& c_color{c_entity[gsc_colorProp.data()]};
 
-    auto red = get_int(c_color, gsc_redProp);
-    auto green = get_int(c_color, gsc_greenProp);
-    auto blue = get_int(c_color, gsc_blueProp);
+    const auto c_red = get_int(c_color, gsc_redProp);
+    const auto c_green = get_int(c_color, gsc_greenProp);
+    const auto c_blue = get_int(c_color, gsc_blueProp);
 
-    if (red && green && blue) {
-      shapeLink.setFillColor(sf::Color{static_cast<sf::Uint8>(red.value()),
-                                       static_cast<sf::Uint8>(green.value()),
-                                       static_cast<sf::Uint8>(blue.value())});
+    if (c_red && c_green && c_blue) {
+      shapeLink.setFillColor(sf::Color{static_cast<sf::Uint8>(c_red.value()),
+                                       static_cast<sf::Uint8>(c_green.value()),
+                                       static_cast<sf::Uint8>(c_blue.value())});
     }
   }
 }
 
 void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
                b2ShapeDef& shapeDefLink) {
-  if (auto type = get_int(c_body, gsc_typeProp)) {
-    bodyDefLink.type = static_cast<b2BodyType>(type.value());
+  if (const auto c_type = get_int(c_body, gsc_typeProp)) {
+    bodyDefLink.type = static_cast<b2BodyType>(c_type.value());
   }
 
   if (contains_key(c_body, gsc_positionProp)) {
     const Json::Value& c_position{c_body[gsc_positionProp.data()]};
 
-    const auto x = get_float(c_position, gsc_xProp);
-    const auto y = get_float(c_position, gsc_yProp);
+    const auto c_x = get_float(c_position, gsc_xProp);
+    const auto c_y = get_float(c_position, gsc_yProp);
 
-    if (x && y) {
+    if (c_x && c_y) {
       bodyDefLink.position =
-          b2Vec2{x.value() / gsc_scale, y.value() / gsc_scale};
+          b2Vec2{c_x.value() / gsc_scale, c_y.value() / gsc_scale};
     }
   }
 
-  if (const auto linearDamping = get_float(c_body, gsc_linearDampingProp)) {
-    bodyDefLink.linearDamping = linearDamping.value();
+  if (const auto c_linearDamping = get_float(c_body, gsc_linearDampingProp)) {
+    bodyDefLink.linearDamping = c_linearDamping.value();
   }
 
-  if (const auto angularDamping = get_float(c_body, gsc_angularDampingProp)) {
-    bodyDefLink.angularDamping = angularDamping.value();
+  if (const auto c_angularDamping = get_float(c_body, gsc_angularDampingProp)) {
+    bodyDefLink.angularDamping = c_angularDamping.value();
   }
 
-  if (const auto density = get_float(c_body, gsc_densityProp)) {
-    shapeDefLink.density = density.value();
+  if (const auto c_density = get_float(c_body, gsc_densityProp)) {
+    shapeDefLink.density = c_density.value();
   }
 
-  if (const auto friction = get_float(c_body, gsc_frictionProp)) {
-    shapeDefLink.material.friction = friction.value();
+  if (const auto c_friction = get_float(c_body, gsc_frictionProp)) {
+    shapeDefLink.material.friction = c_friction.value();
   }
 
-  if (const auto restitution = get_float(c_body, gsc_restitutionProp)) {
-    shapeDefLink.material.restitution = restitution.value();
+  if (const auto c_restitution = get_float(c_body, gsc_restitutionProp)) {
+    shapeDefLink.material.restitution = c_restitution.value();
   }
 }
 
 std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
-  if (const auto type = get_int(c_brain, gsc_typeProp)) {
-    if (type == 0) {
+  if (const auto c_type = get_int(c_brain, gsc_typeProp)) {
+    if (static_cast<brain>(c_type.value()) == brain::WANDER) {
       sf::Vector2f initialVelocity{0.0f, 0.0f};
 
       if (contains_key(c_brain, gsc_velocityProp)) {
         const Json::Value& c_velocity{c_brain[gsc_velocityProp.data()]};
 
-        const auto x = get_float(c_velocity, gsc_xProp);
-        const auto y = get_float(c_velocity, gsc_yProp);
+        const auto c_x = get_float(c_velocity, gsc_xProp);
+        const auto c_y = get_float(c_velocity, gsc_yProp);
 
-        if (x && y) {
-          initialVelocity.x = x.value();
-          initialVelocity.y = y.value();
+        if (c_x && c_y) {
+          initialVelocity.x = c_x.value();
+          initialVelocity.y = c_y.value();
         }
       }
 
-      return std::make_unique<wander_brain>(initialVelocity);
+      auto brainUPtr{std::make_unique<wander_brain>(initialVelocity)};
+
+      if (const auto c_jitterStep = get_float(c_brain, gsc_jitterStepProp)) {
+        brainUPtr->set_jitter_step(c_jitterStep.value());
+      }
+
+      if (contains_key(c_brain, gsc_maxVelocityProp)) {
+        const Json::Value& c_maxVelocity{c_brain[gsc_maxVelocityProp.data()]};
+
+        const auto c_x = get_float(c_maxVelocity, gsc_xProp);
+        const auto c_y = get_float(c_maxVelocity, gsc_yProp);
+
+        if (c_x && c_y) {
+          brainUPtr->set_max_velocity(sf::Vector2f{c_x.value(), c_y.value()});
+        }
+      }
+
+      return brainUPtr;
     }
   }
 
@@ -211,28 +232,29 @@ void load_entities(const Json::Value& c_root,
   }
 
   for (const Json::Value& c_entity : c_root[gsc_entitiesProp.data()]) {
-    if (auto shape{get_string(c_entity, gsc_shapeProp)}) {
+    if (const auto c_shape{get_string(c_entity, gsc_shapeProp)}) {
       std::unique_ptr<sf::Shape> shapeUPtr{nullptr};
 
-      if (shape.value() == gsc_circleShape) {
+      if (c_shape.value() == gsc_circleShape) {
         auto circleUPtr{std::make_unique<sf::CircleShape>()};
 
-        if (auto radius = get_float(c_entity, gsc_radiusProp)) {
-          circleUPtr->setRadius(radius.value());
+        if (const auto c_radius = get_float(c_entity, gsc_radiusProp)) {
+          circleUPtr->setRadius(c_radius.value());
         }
 
         shapeUPtr = std::move(circleUPtr);
-      } else if (shape.value() == gsc_rectangleShape) {
+      } else if (c_shape.value() == gsc_rectangleShape) {
         auto rectangleUPtr{std::make_unique<sf::RectangleShape>()};
 
         if (contains_key(c_entity, gsc_sizeProp)) {
           const Json::Value& c_size{c_entity[gsc_sizeProp.data()]};
 
-          auto width = get_float(c_size, gsc_widthProp);
-          auto height = get_float(c_size, gsc_heightProp);
+          const auto c_width = get_float(c_size, gsc_widthProp);
+          const auto c_height = get_float(c_size, gsc_heightProp);
 
-          if (width && height) {
-            rectangleUPtr->setSize(sf::Vector2f{width.value(), height.value()});
+          if (c_width && c_height) {
+            rectangleUPtr->setSize(
+                sf::Vector2f{c_width.value(), c_height.value()});
           }
         }
 

@@ -100,25 +100,25 @@ void app::fill_viewport() noexcept {
   library::scene_loader::load(gsc_scenePath, entities);
 
   for (auto& entity : entities) {
-    b2BodyId bodyId{b2CreateBody(this->m_worldId, &entity.m_bodyDef)};
+    const b2BodyId c_bodyId{b2CreateBody(this->m_worldId, &entity.m_bodyDef)};
 
     if (sf::CircleShape* const circlePtr =
             dynamic_cast<sf::CircleShape*>(entity.m_shapeUPtr.get())) {
-      b2Circle circle{b2Vec2{0.0f, 0.0f},
-                      circlePtr->getRadius() / library::gsc_scale};
+      const b2Circle c_circle{b2Vec2{0.0f, 0.0f},
+                              circlePtr->getRadius() / library::gsc_scale};
 
-      b2CreateCircleShape(bodyId, &entity.m_shapeDef, &circle);
+      b2CreateCircleShape(c_bodyId, &entity.m_shapeDef, &c_circle);
     } else if (sf::RectangleShape* const rectanglePtr =
                    dynamic_cast<sf::RectangleShape*>(
                        entity.m_shapeUPtr.get())) {
-      b2Polygon polygon{
+      const b2Polygon c_polygon{
           b2MakeBox(rectanglePtr->getOrigin().x / library::gsc_scale,
                     rectanglePtr->getOrigin().y / library::gsc_scale)};
 
-      b2CreatePolygonShape(bodyId, &entity.m_shapeDef, &polygon);
+      b2CreatePolygonShape(c_bodyId, &entity.m_shapeDef, &c_polygon);
     }
 
-    this->m_viewport.add(std::move(entity.m_shapeUPtr), bodyId,
+    this->m_viewport.add(std::move(entity.m_shapeUPtr), c_bodyId,
                          std::move(entity.m_brainUPtr));
   }
 }
