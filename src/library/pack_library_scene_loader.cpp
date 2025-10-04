@@ -2,6 +2,7 @@
 
 #include <json/json.h>
 
+#include <SFML/Config.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <filesystem>
@@ -50,12 +51,13 @@ void load_circles(const Json::Value& c_root,
     if (c_circle.isMember("color")) {
       const Json::Value& c_color{c_circle["color"]};
 
-      if (c_color.isMember("r") && c_color["r"].isNumeric() &&
-          c_color.isMember("g") && c_color["g"].isNumeric() &&
-          c_color.isMember("b") && c_color["b"].isNumeric()) {
-        shapeUPtr->setFillColor(sf::Color{c_color["r"].asFloat(),
-                                          c_color["g"].asFloat(),
-                                          c_color["b"].asFloat()});
+      if (c_color.isMember("r") && c_color["r"].isUInt() &&
+          c_color.isMember("g") && c_color["g"].isUInt() &&
+          c_color.isMember("b") && c_color["b"].isUInt()) {
+        shapeUPtr->setFillColor(
+            sf::Color{static_cast<sf::Uint8>(c_color["r"].asUInt()),
+                      static_cast<sf::Uint8>(c_color["g"].asUInt()),
+                      static_cast<sf::Uint8>(c_color["b"].asUInt())});
       }
     }
 
