@@ -6,7 +6,6 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-#include <SFML/Graphics/Shape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -18,6 +17,7 @@
 #include <vector>
 
 #include "../library/pack_library_preprocessor.hpp"
+#include "../library/pack_library_scene_entity.hpp"
 #include "../library/pack_library_scene_loader.hpp"
 #include "../library/pack_library_wander_brain.hpp"
 
@@ -93,10 +93,10 @@ bool app::start() noexcept {
 }
 
 void app::fill_viewport() noexcept {
-  std::vector<std::unique_ptr<sf::Shape>> shapes{};
-  library::scene_loader::load(gsc_scenePath, shapes);
+  std::vector<library::scene_entity> entities{};
+  library::scene_loader::load(gsc_scenePath, entities);
 
-  for (auto& shape : shapes) {
+  for (auto& entity : entities) {
     b2BodyDef bodyDef{b2DefaultBodyDef()};
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {400.0f / 30.0f, 300.0f / 30.0f};
@@ -119,7 +119,8 @@ void app::fill_viewport() noexcept {
     auto brainUPtr{
         std::make_unique<library::wander_brain>(sf::Vector2f{0.0f, 0.0f})};
 
-    this->m_viewport.add(std::move(shape), bodyId, std::move(brainUPtr));
+    this->m_viewport.add(std::move(entity.m_shapeUPtr), bodyId,
+                         std::move(brainUPtr));
   }
 }
 

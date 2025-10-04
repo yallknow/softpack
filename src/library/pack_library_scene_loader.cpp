@@ -8,6 +8,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 
 #include "pack_library_preprocessor.hpp"
 
@@ -17,7 +18,7 @@ namespace library {
 namespace {
 
 void load_circles(const Json::Value& c_root,
-                  std::vector<std::unique_ptr<sf::Shape>>& shapesLink) {
+                  std::vector<library::scene_entity>& entitiesLink) {
   if (!c_root.isMember("circles") || !c_root["circles"].isArray()) {
     return;
   }
@@ -62,7 +63,7 @@ void load_circles(const Json::Value& c_root,
       }
     }
 
-    shapesLink.emplace_back(std::move(shapeUPtr));
+    entitiesLink.emplace_back(std::move(shapeUPtr), b2BodyId{}, nullptr);
   }
 }
 
@@ -70,7 +71,7 @@ void load_circles(const Json::Value& c_root,
 
 bool scene_loader::load(
     const std::string_view c_path,
-    std::vector<std::unique_ptr<sf::Shape>>& shapesLink) noexcept {
+    std::vector<library::scene_entity>& entitiesLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!std::filesystem::exists(c_path)) {
@@ -100,7 +101,7 @@ bool scene_loader::load(
     return false;
   }
 
-  load_circles(root, shapesLink);
+  load_circles(root, entitiesLink);
 
   return true;
 }
