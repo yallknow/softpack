@@ -1,17 +1,25 @@
 ﻿#include "pack_client_app.hpp"
 
 #include <box2d/box2d.h>
+#include <box2d/collision.h>
+#include <box2d/types.h>
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <SFML/Graphics/Shape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
+#include <memory>
 #include <string_view>
+#include <vector>
 
 #include "../library/pack_library_preprocessor.hpp"
+#include "../library/pack_library_scene_loader.hpp"
+#include "../library/pack_library_wander_brain.hpp"
 
 namespace pack {
 namespace client {
@@ -21,6 +29,7 @@ namespace {
 constexpr std::string_view gsc_windowTitle{"softpack"};
 constexpr std::string_view gsc_viewportTitle{"viewport"};
 constexpr std::string_view gsc_minimapTitle{"minimap"};
+constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 
 constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 constexpr std::uint32_t gsc_borderHeight{35u};
@@ -73,7 +82,7 @@ bool app::start() noexcept {
   ImGuiIO& ioLink{ImGui::GetIO()};
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  // TODO: Add canvas filling.
+  this->fill_viewport();
 
   this->main_loop();
 
@@ -81,6 +90,37 @@ bool app::start() noexcept {
   PACK_LIBRARY_LOG_INFO("ImGui::SFML shut down.");
 
   return true;
+}
+
+void app::fill_viewport() noexcept {
+  std::vector<std::unique_ptr<sf::Shape>> shapes{};
+  library::scene_loader::load(gsc_scenePath, shapes);
+
+  for (auto& shape : shapes) {
+    b2BodyDef bodyDef{b2DefaultBodyDef()};
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = {400.0f / 30.0f, 300.0f / 30.0f};
+    bodyDef.linearDamping = 2.0f;
+    bodyDef.angularDamping = 2.0f;
+
+    b2BodyId bodyId{b2CreateBody(this->m_worldId, &bodyDef)};
+
+    b2ShapeDef shapeDef{b2DefaultShapeDef()};
+    shapeDef.density = 1.0f;
+    shapeDef.material.friction = 1.2f;
+    shapeDef.material.restitution = 0.4f;
+
+    b2Circle circle{};
+    circle.center = {0.0f, 0.0f};
+    circle.radius = 20.0f / 30.0f;
+
+    b2CreateCircleShape(bodyId, &shapeDef, &circle);
+
+    auto brainUPtr{
+        std::make_unique<library::wander_brain>(sf::Vector2f{0.0f, 0.0f})};
+
+    this->m_viewport.add(std::move(shape), bodyId, std::move(brainUPtr));
+  }
 }
 
 void app::main_loop() noexcept {
@@ -123,8 +163,8 @@ void app::main_loop() noexcept {
     ImGui::End();
 
     if (ImGui::Begin(gsc_minimapTitle.data())) {
-      const ImTextureID c_textureId = static_cast<ImTextureID>(
-          this->m_viewport.get_texture().getTexture().getNativeHandle());
+      const ImTextureID c_textureId{static_cast<ImTextureID>(
+          this->m_viewport.get_texture().getTexture().getNativeHandle())};
 
       ImGui::Image(c_textureId, gsc_minimapSize, gsc_minmapLowerLeft,
                    gsc_minmapUpperRight);
