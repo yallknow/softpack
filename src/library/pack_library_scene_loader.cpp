@@ -186,7 +186,9 @@ void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
 std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
   if (const auto c_type = get_int(c_brain, gsc_typeProp)) {
     if (static_cast<brain>(c_type.value()) == brain::WANDER) {
-      sf::Vector2f initialVelocity{0.0f, 0.0f};
+      sf::Vector2f velocity{0.0f, 0.0f};
+      sf::Vector2f maxVelocity{0.0f, 0.0f};
+      float jitterStep{0.0f};
 
       if (contains_key(c_brain, gsc_velocityProp)) {
         const Json::Value& c_velocity{c_brain[gsc_velocityProp.data()]};
@@ -195,15 +197,9 @@ std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
         const auto c_y = get_float(c_velocity, gsc_yProp);
 
         if (c_x && c_y) {
-          initialVelocity.x = c_x.value();
-          initialVelocity.y = c_y.value();
+          velocity.x = c_x.value();
+          velocity.y = c_y.value();
         }
-      }
-
-      auto brainUPtr{std::make_unique<wander_brain>(initialVelocity)};
-
-      if (const auto c_jitterStep = get_float(c_brain, gsc_jitterStepProp)) {
-        brainUPtr->set_jitter_step(c_jitterStep.value());
       }
 
       if (contains_key(c_brain, gsc_maxVelocityProp)) {
@@ -213,11 +209,16 @@ std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
         const auto c_y = get_float(c_maxVelocity, gsc_yProp);
 
         if (c_x && c_y) {
-          brainUPtr->set_max_velocity(sf::Vector2f{c_x.value(), c_y.value()});
+          maxVelocity.x = c_x.value();
+          maxVelocity.y = c_y.value();
         }
       }
 
-      return brainUPtr;
+      if (const auto c_jitterStep = get_float(c_brain, gsc_jitterStepProp)) {
+        jitterStep = c_jitterStep.value();
+      }
+
+      return std::make_unique<wander_brain>(velocity, maxVelocity, jitterStep);
     }
   }
 
@@ -261,23 +262,25 @@ void load_entities(const Json::Value& c_root,
         shapeUPtr = std::move(rectangleUPtr);
       }
 
-      load_common(c_entity, *shapeUPtr);
+      if (shapeUPtr) {
+        load_common(c_entity, *shapeUPtr);
 
-      b2BodyDef bodyDef{b2DefaultBodyDef()};
-      b2ShapeDef shapeDef{b2DefaultShapeDef()};
+        b2BodyDef bodyDef{b2DefaultBodyDef()};
+        b2ShapeDef shapeDef{b2DefaultShapeDef()};
 
-      if (contains_key(c_entity, gsc_bodyProp)) {
-        load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef);
+        if (contains_key(c_entity, gsc_bodyProp)) {
+          load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef);
+        }
+
+        std::unique_ptr<abstract::brain> brainUPtr{nullptr};
+
+        if (contains_key(c_entity, gsc_brainProp)) {
+          brainUPtr = load_brain(c_entity[gsc_brainProp.data()]);
+        }
+
+        entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
+                                  std::move(brainUPtr));
       }
-
-      std::unique_ptr<abstract::brain> brainUPtr{nullptr};
-
-      if (contains_key(c_entity, gsc_brainProp)) {
-        brainUPtr = load_brain(c_entity[gsc_brainProp.data()]);
-      }
-
-      entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
-                                std::move(brainUPtr));
     }
   }
 }

@@ -31,31 +31,31 @@
       "brain": {
         "type": 0,
         "velocity": {
-          "x": 20.0,
-          "y": 20.0
+          "x": 100.0,
+          "y": 100.0
         },
-        "jitterStep": 10000000.0,
         "maxVelocity": {
-          "x": 2000.0,
-          "y": 2000.0
-        }
+          "x": 1000.0,
+          "y": 1000.0
+        },
+        "jitterStep": 50000.0
       }
     },
     {
       "shape": "circle",
-      "radius": 20.0,
+      "radius": 30.0,
       "origin": {
-        "x": 20.0,
-        "y": 20.0
+        "x": 30.0,
+        "y": 30.0
       },
       "position": {
         "x": 400.0,
         "y": 400.0
       },
       "color": {
-        "red": 100,
+        "red": 10,
         "green": 200,
-        "blue": 150
+        "blue": 50
       },
       "body": {
         "type": 2,
@@ -72,14 +72,14 @@
       "brain": {
         "type": 0,
         "velocity": {
-          "x": 20.0,
-          "y": 20.0
+          "x": 100.0,
+          "y": 100.0
         },
-        "jitterStep": 1000000.0,
         "maxVelocity": {
-          "x": 2000.0,
-          "y": 2000.0
-        }
+          "x": 1000.0,
+          "y": 1000.0
+        },
+        "jitterStep": 50000.0
       }
     },
     {
@@ -116,25 +116,25 @@
       "brain": {
         "type": 0,
         "velocity": {
-          "x": 20.0,
-          "y": 20.0
+          "x": 100.0,
+          "y": 100.0
         },
-        "jitterStep": 100000.0,
         "maxVelocity": {
-          "x": 2000.0,
-          "y": 2000.0
-        }
+          "x": 1000.0,
+          "y": 1000.0
+        },
+        "jitterStep": 50000.0
       }
     },
     {
       "shape": "rectangle",
       "size": {
-        "width": 40.0,
-        "height": 40.0
+        "width": 80.0,
+        "height": 60.0
       },
       "origin": {
-        "x": 20.0,
-        "y": 20.0
+        "x": 40.0,
+        "y": 30.0
       },
       "position": {
         "x": 400.0,
@@ -142,7 +142,7 @@
       },
       "color": {
         "red": 200,
-        "green": 100,
+        "green": 50,
         "blue": 150
       },
       "body": {
@@ -160,14 +160,14 @@
       "brain": {
         "type": 0,
         "velocity": {
-          "x": 20.0,
-          "y": 20.0
+          "x": 100.0,
+          "y": 100.0
         },
-        "jitterStep": 10000.0,
         "maxVelocity": {
-          "x": 2000.0,
-          "y": 2000.0
-        }
+          "x": 1000.0,
+          "y": 1000.0
+        },
+        "jitterStep": 50000.0
       }
     }
   ]
