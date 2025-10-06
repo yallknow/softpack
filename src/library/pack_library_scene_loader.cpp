@@ -291,7 +291,8 @@ bool scene_loader::load(
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!std::filesystem::exists(c_path)) {
-    PACK_LIBRARY_LOG_ERROR("The scene description file does not exist");
+    PACK_LIBRARY_LOG_ERROR("The JSON file: " + std::string{c_path} +
+                           " does not exist");
     return false;
   }
 

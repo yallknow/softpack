@@ -144,7 +144,7 @@ void app::main_loop() noexcept {
     const float c_dt_seconds{c_dt.asSeconds()};
     timeAccumulator += c_dt_seconds;
 
-    PACK_LIBRARY_LOG_INFO("Delta time =" + std::to_string(c_dt_seconds));
+    PACK_LIBRARY_LOG_INFO("Delta time: " + std::to_string(c_dt_seconds));
 
     ImGui::SFML::Update(this->m_window, c_dt);
 
