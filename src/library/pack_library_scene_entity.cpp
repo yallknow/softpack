@@ -6,7 +6,6 @@ namespace pack {
 namespace library {
 
 scene_entity::scene_entity(
-
     std::unique_ptr<sf::Shape>&& shapeUPtrRLink, const b2BodyDef c_bodyDef,
     const b2ShapeDef c_shapeDef,
     std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept

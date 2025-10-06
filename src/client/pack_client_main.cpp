@@ -21,12 +21,12 @@ int main() {
   app app{};
 
   if (!app.start()) {
-    PACK_LIBRARY_LOG_ERROR("Can't start client!");
+    PACK_LIBRARY_LOG_ERROR("Can't start client");
 
     return EXIT_FAILURE;
   }
 
-  PACK_LIBRARY_LOG_INFO("Client stopped successfully.");
+  PACK_LIBRARY_LOG_INFO("Client stopped successfully");
 
   return EXIT_SUCCESS;
 }

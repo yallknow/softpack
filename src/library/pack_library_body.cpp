@@ -49,6 +49,7 @@ float body::get_rotation() const noexcept {
 
   const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
   const float c_angle{std::atan2(c_transform.q.s, c_transform.q.c)};
+
   return rad_to_deg(c_angle);
 }
 

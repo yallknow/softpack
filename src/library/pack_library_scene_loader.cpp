@@ -31,11 +31,7 @@ constexpr std::string_view gsc_entitiesProp{"entities"};
 constexpr std::string_view gsc_shapeProp{"shape"};
 
 constexpr std::string_view gsc_radiusProp{"radius"};
-
 constexpr std::string_view gsc_sizeProp{"size"};
-constexpr std::string_view gsc_widthProp{"width"};
-constexpr std::string_view gsc_heightProp{"height"};
-
 constexpr std::string_view gsc_originProp{"origin"};
 constexpr std::string_view gsc_positionProp{"position"};
 constexpr std::string_view gsc_xProp{"x"};
@@ -56,8 +52,8 @@ constexpr std::string_view gsc_restitutionProp{"restitution"};
 
 constexpr std::string_view gsc_brainProp{"brain"};
 constexpr std::string_view gsc_velocityProp{"velocity"};
-constexpr std::string_view gsc_jitterStepProp{"jitterStep"};
 constexpr std::string_view gsc_maxVelocityProp{"maxVelocity"};
+constexpr std::string_view gsc_jitterStepProp{"jitterStep"};
 
 constexpr std::string_view gsc_circleShape{"circle"};
 constexpr std::string_view gsc_rectangleShape{"rectangle"};
@@ -65,30 +61,46 @@ constexpr std::string_view gsc_rectangleShape{"rectangle"};
 enum class brain { WANDER = 0 };
 
 bool contains_key(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   const bool c_result = c_value.isMember(key.data());
 
   if (!c_result) {
     PACK_LIBRARY_LOG_WARNING(
-        "Could not find json property: " + std::string(key) + "!");
+        "Could not find JSON property: " + std::string(key) + "!");
   }
 
   return c_result;
 }
 
 bool contains_string(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_key(c_value, key) && c_value[key.data()].isString();
 }
 
 bool contains_double(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_key(c_value, key) && c_value[key.data()].isDouble();
 }
 
 bool contains_int(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_key(c_value, key) && c_value[key.data()].isInt();
+}
+
+bool contains_array(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  return contains_key(c_value, key) && c_value[key.data()].isArray();
 }
 
 std::optional<std::string> get_string(const Json::Value& c_value,
                                       const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_string(c_value, key)
              ? c_value[key.data()].asString()
              : std::optional<std::string>{std::nullopt};
@@ -96,37 +108,45 @@ std::optional<std::string> get_string(const Json::Value& c_value,
 
 std::optional<float> get_float(const Json::Value& c_value,
                                const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_double(c_value, key) ? c_value[key.data()].asFloat()
                                        : std::optional<float>{std::nullopt};
 }
 
 std::optional<int> get_int(const Json::Value& c_value,
                            const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   return contains_int(c_value, key) ? c_value[key.data()].asInt()
                                     : std::optional<int>{std::nullopt};
 }
 
-void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
-  if (contains_key(c_entity, gsc_originProp)) {
-    const Json::Value& c_origin{c_entity[gsc_originProp.data()]};
+std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
+                                         const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-    const auto c_x = get_float(c_origin, gsc_xProp);
-    const auto c_y = get_float(c_origin, gsc_yProp);
+  if (contains_key(c_value, key)) {
+    const auto c_x = get_float(c_value[key.data()], gsc_xProp);
+    const auto c_y = get_float(c_value[key.data()], gsc_yProp);
 
     if (c_x && c_y) {
-      shapeLink.setOrigin(c_x.value(), c_y.value());
+      return sf::Vector2f{c_x.value(), c_y.value()};
     }
   }
 
-  if (contains_key(c_entity, gsc_positionProp)) {
-    const Json::Value& c_position{c_entity[gsc_positionProp.data()]};
+  return std::nullopt;
+}
 
-    const auto c_x = get_float(c_position, gsc_xProp);
-    const auto c_y = get_float(c_position, gsc_yProp);
+void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-    if (c_x && c_y) {
-      shapeLink.setPosition(c_x.value(), c_y.value());
-    }
+  if (const auto c_origin = get_vector2f(c_entity, gsc_originProp)) {
+    shapeLink.setOrigin(c_origin.value());
+  }
+
+  if (const auto c_position = get_vector2f(c_entity, gsc_positionProp)) {
+    shapeLink.setPosition(c_position.value());
   }
 
   if (contains_key(c_entity, gsc_colorProp)) {
@@ -146,20 +166,15 @@ void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
 
 void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
                b2ShapeDef& shapeDefLink) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   if (const auto c_type = get_int(c_body, gsc_typeProp)) {
     bodyDefLink.type = static_cast<b2BodyType>(c_type.value());
   }
 
-  if (contains_key(c_body, gsc_positionProp)) {
-    const Json::Value& c_position{c_body[gsc_positionProp.data()]};
-
-    const auto c_x = get_float(c_position, gsc_xProp);
-    const auto c_y = get_float(c_position, gsc_yProp);
-
-    if (c_x && c_y) {
-      bodyDefLink.position =
-          b2Vec2{c_x.value() / gsc_scale, c_y.value() / gsc_scale};
-    }
+  if (const auto c_position = get_vector2f(c_body, gsc_positionProp)) {
+    bodyDefLink.position = b2Vec2{c_position.value().x / gsc_scale,
+                                  c_position.value().y / gsc_scale};
   }
 
   if (const auto c_linearDamping = get_float(c_body, gsc_linearDampingProp)) {
@@ -184,34 +199,21 @@ void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
 }
 
 std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   if (const auto c_type = get_int(c_brain, gsc_typeProp)) {
     if (static_cast<brain>(c_type.value()) == brain::WANDER) {
       sf::Vector2f velocity{0.0f, 0.0f};
       sf::Vector2f maxVelocity{0.0f, 0.0f};
       float jitterStep{0.0f};
 
-      if (contains_key(c_brain, gsc_velocityProp)) {
-        const Json::Value& c_velocity{c_brain[gsc_velocityProp.data()]};
-
-        const auto c_x = get_float(c_velocity, gsc_xProp);
-        const auto c_y = get_float(c_velocity, gsc_yProp);
-
-        if (c_x && c_y) {
-          velocity.x = c_x.value();
-          velocity.y = c_y.value();
-        }
+      if (const auto c_velocity = get_vector2f(c_brain, gsc_velocityProp)) {
+        velocity = c_velocity.value();
       }
 
-      if (contains_key(c_brain, gsc_maxVelocityProp)) {
-        const Json::Value& c_maxVelocity{c_brain[gsc_maxVelocityProp.data()]};
-
-        const auto c_x = get_float(c_maxVelocity, gsc_xProp);
-        const auto c_y = get_float(c_maxVelocity, gsc_yProp);
-
-        if (c_x && c_y) {
-          maxVelocity.x = c_x.value();
-          maxVelocity.y = c_y.value();
-        }
+      if (const auto c_maxVelocity =
+              get_vector2f(c_brain, gsc_maxVelocityProp)) {
+        maxVelocity = c_maxVelocity.value();
       }
 
       if (const auto c_jitterStep = get_float(c_brain, gsc_jitterStepProp)) {
@@ -227,8 +229,10 @@ std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
 
 void load_entities(const Json::Value& c_root,
                    std::vector<library::scene_entity>& entitiesLink) {
-  if (!contains_key(c_root, gsc_entitiesProp) ||
-      !c_root[gsc_entitiesProp.data()].isArray()) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  if (!contains_array(c_root, gsc_entitiesProp)) {
+    PACK_LIBRARY_LOG_ERROR("Entity array not found");
     return;
   }
 
@@ -247,19 +251,13 @@ void load_entities(const Json::Value& c_root,
       } else if (c_shape.value() == gsc_rectangleShape) {
         auto rectangleUPtr{std::make_unique<sf::RectangleShape>()};
 
-        if (contains_key(c_entity, gsc_sizeProp)) {
-          const Json::Value& c_size{c_entity[gsc_sizeProp.data()]};
-
-          const auto c_width = get_float(c_size, gsc_widthProp);
-          const auto c_height = get_float(c_size, gsc_heightProp);
-
-          if (c_width && c_height) {
-            rectangleUPtr->setSize(
-                sf::Vector2f{c_width.value(), c_height.value()});
-          }
+        if (const auto c_size = get_vector2f(c_entity, gsc_sizeProp)) {
+          rectangleUPtr->setSize(c_size.value());
         }
 
         shapeUPtr = std::move(rectangleUPtr);
+      } else {
+        PACK_LIBRARY_LOG_ERROR("Unknown shape property: " + c_shape.value());
       }
 
       if (shapeUPtr) {
@@ -293,33 +291,31 @@ bool scene_loader::load(
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!std::filesystem::exists(c_path)) {
-    PACK_LIBRARY_LOG_ERROR("The scene description file does not exist!");
+    PACK_LIBRARY_LOG_ERROR("The scene description file does not exist");
     return false;
   }
 
-  Json::Value root{};
+  std::ifstream file{c_path.data(), std::ifstream::binary};
 
-  try {
-    std::ifstream file{c_path.data(), std::ifstream::binary};
-
-    if (!file.is_open()) {
-      return false;
-    }
-
-    file >> root;
-  } catch (const Json::LogicError& c_exception) {
-    PACK_LIBRARY_LOG_ERROR(
-        "Exception Json::LogicError:" + std::string{c_exception.what()} + "!");
-
+  if (!file.is_open()) {
+    PACK_LIBRARY_LOG_ERROR("Failed to open JSON file: " + std::string{c_path});
     return false;
-  } catch (const Json::RuntimeError& c_exception) {
-    PACK_LIBRARY_LOG_ERROR("Exception Json::RuntimeError:" +
-                           std::string{c_exception.what()} + "!");
+  }
 
+  Json::CharReaderBuilder builder{};
+  Json::Value root{};
+  std::string error{};
+
+  if (!Json::parseFromStream(builder, file, &root, &error)) {
+    PACK_LIBRARY_LOG_ERROR("Failed to parse JSON file: " + error);
     return false;
   }
 
   load_entities(root, entitiesLink);
+
+  PACK_LIBRARY_LOG_INFO("Successfully loaded " +
+                        std::to_string(entitiesLink.size()) +
+                        " entities from JSON file");
 
   return true;
 }

@@ -40,7 +40,6 @@ wander_brain& wander_brain::operator=(wander_brain&& otherRLink) noexcept {
 void wander_brain::tick(const float c_dt) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  // (std::rand() % 3 - 1) -> [-1, 0, 1]
   const float c_newX{this->m_velocity.x +
                      ((std::rand() % 3 - 1) * m_jitterStep * c_dt)};
   const float c_newY{this->m_velocity.y +

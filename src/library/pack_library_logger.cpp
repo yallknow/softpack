@@ -104,7 +104,7 @@ void logger::destroy() noexcept {
 bool logger::is_initialized() noexcept { return ms_isInitialized; }
 
 void logger::profile(const std::string_view c_data) noexcept {
-  if (!ms_isInitialized) {
+  if (!ms_isInitialized || !ms_profileMutexUPtr) {
     return;
   }
 
@@ -113,7 +113,7 @@ void logger::profile(const std::string_view c_data) noexcept {
 }
 
 void logger::log(const std::string_view c_data) noexcept {
-  if (!ms_isInitialized) {
+  if (!ms_isInitialized || !ms_logMutexUPtr) {
     return;
   }
 
@@ -122,7 +122,7 @@ void logger::log(const std::string_view c_data) noexcept {
 }
 
 void logger::async(const std::string_view c_data) noexcept {
-  if (!ms_isInitialized) {
+  if (!ms_isInitialized || !ms_asyncMutexUPtr) {
     return;
   }
 

@@ -65,6 +65,7 @@ app::app() noexcept
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
   worldDef.gravity = gsc_gravity;
+
   this->m_worldId = b2CreateWorld(&worldDef);
 
   this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
@@ -80,7 +81,7 @@ bool app::start() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   ImGui::SFML::Init(this->m_window);
-  PACK_LIBRARY_LOG_INFO("ImGui::SFML initialized.");
+  PACK_LIBRARY_LOG_INFO("ImGui::SFML initialized");
 
   ImGuiIO& ioLink{ImGui::GetIO()};
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -90,12 +91,14 @@ bool app::start() noexcept {
   this->main_loop();
 
   ImGui::SFML::Shutdown();
-  PACK_LIBRARY_LOG_INFO("ImGui::SFML shut down.");
+  PACK_LIBRARY_LOG_INFO("ImGui::SFML shut down");
 
   return true;
 }
 
 void app::fill_viewport() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
   std::vector<library::scene_entity> entities{};
   library::scene_loader::load(gsc_scenePath, entities);
 
@@ -133,7 +136,7 @@ void app::main_loop() noexcept {
     this->poll_events();
 
     if (!this->m_window.isOpen()) {
-      PACK_LIBRARY_LOG_INFO("The window was closed by an event.");
+      PACK_LIBRARY_LOG_INFO("The window was closed by an event");
       break;
     }
 
@@ -141,7 +144,7 @@ void app::main_loop() noexcept {
     const float c_dt_seconds{c_dt.asSeconds()};
     timeAccumulator += c_dt_seconds;
 
-    PACK_LIBRARY_LOG_INFO("Delta time =" + std::to_string(c_dt_seconds) + ".");
+    PACK_LIBRARY_LOG_INFO("Delta time =" + std::to_string(c_dt_seconds));
 
     ImGui::SFML::Update(this->m_window, c_dt);
 
@@ -187,7 +190,7 @@ void app::poll_events() noexcept {
 
     switch (event.type) {
       case sf::Event::Closed: {
-        PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received.");
+        PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received");
         this->m_window.close();
         break;
       }

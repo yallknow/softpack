@@ -85,8 +85,8 @@
     {
       "shape": "rectangle",
       "size": {
-        "width": 40.0,
-        "height": 40.0
+        "x": 40.0,
+        "y": 40.0
       },
       "origin": {
         "x": 20.0,
@@ -129,8 +129,8 @@
     {
       "shape": "rectangle",
       "size": {
-        "width": 80.0,
-        "height": 60.0
+        "x": 80.0,
+        "y": 60.0
       },
       "origin": {
         "x": 40.0,
