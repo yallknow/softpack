@@ -35,7 +35,7 @@ constexpr std::string_view gsc_minimapTitle{"minimap"};
 constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 
 constexpr std::uint32_t gsc_windowFramerateLimit{60u};
-constexpr std::uint32_t gsc_borderHeight{35u};
+constexpr std::uint32_t gsc_borderHeight{36u};
 constexpr std::uint32_t gsc_windowWidth{1'280u};
 constexpr std::uint32_t gsc_windowHeight{720u};
 constexpr std::uint32_t gsc_minimapWidth{200u};
@@ -119,6 +119,9 @@ void app::fill_viewport() noexcept {
                     rectanglePtr->getOrigin().y / library::gsc_scale)};
 
       b2CreatePolygonShape(c_bodyId, &entity.m_shapeDef, &c_polygon);
+    } else {
+      PACK_LIBRARY_LOG_WARNING("Unknown shape");
+      continue;
     }
 
     this->m_viewport.add(std::move(entity.m_shapeUPtr), c_bodyId,

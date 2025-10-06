@@ -66,8 +66,8 @@ bool contains_key(const Json::Value& c_value, const std::string_view key) {
   const bool c_result = c_value.isMember(key.data());
 
   if (!c_result) {
-    PACK_LIBRARY_LOG_WARNING(
-        "Could not find JSON property: " + std::string(key) + "!");
+    PACK_LIBRARY_LOG_WARNING("Could not find JSON property: " +
+                             std::string(key));
   }
 
   return c_result;
@@ -257,28 +257,27 @@ void load_entities(const Json::Value& c_root,
 
         shapeUPtr = std::move(rectangleUPtr);
       } else {
-        PACK_LIBRARY_LOG_ERROR("Unknown shape property: " + c_shape.value());
+        PACK_LIBRARY_LOG_WARNING("Unknown shape property: " + c_shape.value());
+        continue;
       }
 
-      if (shapeUPtr) {
-        load_common(c_entity, *shapeUPtr);
+      load_common(c_entity, *shapeUPtr);
 
-        b2BodyDef bodyDef{b2DefaultBodyDef()};
-        b2ShapeDef shapeDef{b2DefaultShapeDef()};
+      b2BodyDef bodyDef{b2DefaultBodyDef()};
+      b2ShapeDef shapeDef{b2DefaultShapeDef()};
 
-        if (contains_key(c_entity, gsc_bodyProp)) {
-          load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef);
-        }
-
-        std::unique_ptr<abstract::brain> brainUPtr{nullptr};
-
-        if (contains_key(c_entity, gsc_brainProp)) {
-          brainUPtr = load_brain(c_entity[gsc_brainProp.data()]);
-        }
-
-        entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
-                                  std::move(brainUPtr));
+      if (contains_key(c_entity, gsc_bodyProp)) {
+        load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef);
       }
+
+      std::unique_ptr<abstract::brain> brainUPtr{nullptr};
+
+      if (contains_key(c_entity, gsc_brainProp)) {
+        brainUPtr = load_brain(c_entity[gsc_brainProp.data()]);
+      }
+
+      entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
+                                std::move(brainUPtr));
     }
   }
 }

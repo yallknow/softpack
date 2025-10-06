@@ -169,6 +169,574 @@
         },
         "jitterStep": 50000.0
       }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "color": {
+        "red": 200,
+        "green": 60,
+        "blue": 60
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 200.0,
+          "y": 200.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "color": {
+        "red": 200,
+        "green": 60,
+        "blue": 60
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 200.0,
+          "y": 200.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "color": {
+        "red": 200,
+        "green": 60,
+        "blue": 60
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 200.0,
+          "y": 200.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "color": {
+        "red": 200,
+        "green": 60,
+        "blue": 60
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 200.0,
+          "y": 200.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 200.0,
+        "y": 200.0
+      },
+      "color": {
+        "red": 200,
+        "green": 60,
+        "blue": 60
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 200.0,
+          "y": 200.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 40.0,
+        "y": 40.0
+      },
+      "origin": {
+        "x": 20.0,
+        "y": 20.0
+      },
+      "position": {
+        "x": 400.0,
+        "y": 400.0
+      },
+      "color": {
+        "red": 60,
+        "green": 120,
+        "blue": 220
+      },
+      "body": {
+        "type": 2,
+        "position": {
+          "x": 400.0,
+          "y": 400.0
+        },
+        "linearDamping": 1.5,
+        "angularDamping": 1.5,
+        "density": 1.0,
+        "friction": 0.3,
+        "restitution": 0.5
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 1080.0,
+        "y": 10.0
+      },
+      "origin": {
+        "x": 540.0,
+        "y": 5.0
+      },
+      "position": {
+        "x": 540.0,
+        "y": -5.0
+      },
+      "body": {
+        "type": 0,
+        "position": {
+          "x": 540.0,
+          "y": -5.0
+        }
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 1080.0,
+        "y": 10.0
+      },
+      "origin": {
+        "x": 540.0,
+        "y": 5.0
+      },
+      "position": {
+        "x": 540.0,
+        "y": 689.0
+      },
+      "body": {
+        "type": 0,
+        "position": {
+          "x": 540.0,
+          "y": 689.0
+        }
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 10.0,
+        "y": 684.0
+      },
+      "origin": {
+        "x": 5.0,
+        "y": 342.0
+      },
+      "position": {
+        "x": -5.0,
+        "y": 342.0
+      },
+      "body": {
+        "type": 0,
+        "position": {
+          "x": -5.0,
+          "y": 342.0
+        }
+      }
+    },
+    {
+      "shape": "rectangle",
+      "size": {
+        "x": 10.0,
+        "y": 684.0
+      },
+      "origin": {
+        "x": 5.0,
+        "y": 342.0
+      },
+      "position": {
+        "x": 1085.0,
+        "y": 342.0
+      },
+      "body": {
+        "type": 0,
+        "position": {
+          "x": 1085.0,
+          "y": 342.0
+        }
+      }
     }
   ]
 }
