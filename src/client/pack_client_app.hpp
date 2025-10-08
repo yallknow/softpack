@@ -26,7 +26,7 @@ class app final : private boost::noncopyable {
   bool start() noexcept;
 
  private:
-  void fill_viewport() noexcept;
+  void load_scene() noexcept;
   void main_loop() noexcept;
   void poll_events() noexcept;
 
