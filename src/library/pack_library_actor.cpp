@@ -1,5 +1,7 @@
 #include "pack_library_actor.hpp"
 
+#include <type_traits>
+
 #include "pack_library_preprocessor.hpp"
 
 namespace pack {

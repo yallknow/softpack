@@ -1,6 +1,7 @@
 #include "pack_library_canvas.hpp"
 
 #include <SFML/Graphics/Color.hpp>
+#include <type_traits>
 
 #include "pack_library_preprocessor.hpp"
 

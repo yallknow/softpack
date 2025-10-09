@@ -26,6 +26,7 @@ class shape final : private boost::noncopyable {
   void set_position(const sf::Vector2f& c_position) const noexcept;
   void set_rotation(const float c_rotation) const noexcept;
 
+ public:
   void draw() const noexcept;
 
  private:

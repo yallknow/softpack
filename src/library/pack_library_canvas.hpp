@@ -3,12 +3,16 @@
 #ifndef PACK_LIBRARY_CANVAS
 #define PACK_LIBRARY_CANVAS
 
+#include <box2d/id.h>
+
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "abstract/pack_library_abstract_brain.hpp"
 #include "pack_library_actor.hpp"
 
 namespace pack {

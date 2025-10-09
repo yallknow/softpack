@@ -1,6 +1,9 @@
 #include "pack_library_wander_brain.hpp"
 
-#include <cmath>
+#include <stdlib.h>
+
+#include <cstdlib>
+#include <type_traits>
 
 #include "pack_library_preprocessor.hpp"
 
@@ -41,15 +44,15 @@ void wander_brain::tick(const float c_dt) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   const float c_newX{this->m_velocity.x +
-                     ((std::rand() % 3 - 1) * m_jitterStep * c_dt)};
+                     ((std::rand() % 3 - 1) * this->m_jitterStep * c_dt)};
   const float c_newY{this->m_velocity.y +
-                     ((std::rand() % 3 - 1) * m_jitterStep * c_dt)};
+                     ((std::rand() % 3 - 1) * this->m_jitterStep * c_dt)};
 
-  if (std::abs(c_newX) < m_maxVelocity.x) {
+  if (std::abs(c_newX) < this->m_maxVelocity.x) {
     this->m_velocity.x = c_newX;
   }
 
-  if (std::abs(c_newY) < m_maxVelocity.y) {
+  if (std::abs(c_newY) < this->m_maxVelocity.y) {
     this->m_velocity.y = c_newY;
   }
 }

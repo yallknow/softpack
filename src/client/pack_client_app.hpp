@@ -8,7 +8,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <boost/core/noncopyable.hpp>
 
-#include "../library/pack_library_canvas.hpp"
+#include "../library/pack_library_viewport.hpp"
 
 namespace pack {
 namespace client {
@@ -33,7 +33,7 @@ class app final : private boost::noncopyable {
  private:
   b2WorldId m_worldId;
   sf::RenderWindow m_window;
-  library::canvas m_viewport;
+  library::viewport m_viewport;
 };
 
 }  // namespace client

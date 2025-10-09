@@ -13,7 +13,6 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
 #include <memory>
@@ -30,18 +29,29 @@ namespace client {
 
 namespace {
 
-constexpr std::string_view gsc_windowTitle{"softpack"};
+constexpr std::uint32_t gsc_worldScale{5u};
+
+// viewport
+constexpr std::uint32_t gsc_viewportWidth{1'280u};
+constexpr std::uint32_t gsc_viewportHeight{720u};
+
+constexpr float gsc_minZoom{5.0f};
+constexpr float gsc_maxZoom{1.0f};
+constexpr float gsc_zoomStep{1.0f};
+
 constexpr std::string_view gsc_viewportTitle{"viewport"};
+
+constexpr std::uint32_t gsc_canvasWidth{gsc_viewportWidth * gsc_worldScale};
+constexpr std::uint32_t gsc_canvasHeight{gsc_viewportHeight * gsc_worldScale};
+// !viewport
+
+constexpr std::string_view gsc_windowTitle{"softpack"};
 constexpr std::string_view gsc_minimapTitle{"minimap"};
 constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 
 constexpr std::uint32_t gsc_windowFramerateLimit{60u};
-constexpr std::uint32_t gsc_worldScale{5u};
+
 constexpr std::uint32_t gsc_borderSize{36u};
-constexpr std::uint32_t gsc_viewportWidth{1'280u};
-constexpr std::uint32_t gsc_viewportHeight{720u};
-constexpr std::uint32_t gsc_textureWidth{gsc_viewportWidth * gsc_worldScale};
-constexpr std::uint32_t gsc_textureHeight{gsc_viewportHeight * gsc_worldScale};
 constexpr std::uint32_t gsc_minimapWidth{gsc_viewportWidth / gsc_worldScale};
 constexpr std::uint32_t gsc_minimapHeight{gsc_viewportHeight / gsc_worldScale};
 constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_minimapWidth +
@@ -58,10 +68,6 @@ constexpr ImVec2 gsc_upperRight{1, 0};
 constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
 
 constexpr float gsc_defaultTimestep{1.0f / 600.f};
-constexpr float gsc_minZoom{5.0f};
-constexpr float gsc_maxZoom{1.0f};
-
-float gs_zoom{gsc_maxZoom};
 
 }  // namespace
 
@@ -69,7 +75,9 @@ app::app() noexcept
     : m_worldId{},
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
-      m_viewport{gsc_textureWidth, gsc_textureHeight} {
+      m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_minZoom,
+                 gsc_maxZoom,       gsc_zoomStep,       gsc_viewportTitle,
+                 gsc_canvasWidth,   gsc_canvasHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -227,19 +235,9 @@ void app::poll_events() noexcept {
   while (this->m_window.pollEvent(event)) {
     ImGui::SFML::ProcessEvent(this->m_window, event);
 
+    this->m_viewport.process_event(event);
+
     switch (event.type) {
-      case sf::Event::MouseWheelScrolled: {
-        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-          if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-            if (event.mouseWheelScroll.delta > 0)
-              gs_zoom = std::min(gs_zoom * 1.1f, gsc_minZoom);
-            else {
-              gs_zoom = std::max(gs_zoom / 1.1f, gsc_maxZoom);
-            }
-          }
-        }
-        break;
-      }
       case sf::Event::Closed: {
         PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received");
         this->m_window.close();
