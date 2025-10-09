@@ -13,16 +13,14 @@ namespace pack {
 namespace library {
 
 viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
-                   const float c_minZoom, const float c_maxZoom,
-                   const float c_zoomStep, const std::string_view c_title,
+                   const std::string_view c_title, const float c_minZoom,
+                   const float c_maxZoom, const float c_zoomStep,
                    const std::uint32_t c_canvasWidth,
                    const std::uint32_t c_canvasHeight) noexcept
-    : mc_width{c_width},
-      mc_height{c_height},
+    : abstract::widget{c_width, c_height, c_title},
       mc_minZoom{c_minZoom},
       mc_maxZoom{c_maxZoom},
       mc_zoomStep{c_zoomStep},
-      mc_title{c_title},
       m_zoom{c_maxZoom},
       m_canvas{c_canvasWidth, c_canvasHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -57,6 +55,27 @@ void viewport::tick(const float c_dt) noexcept {
   this->m_canvas.tick(c_dt);
 }
 
+void viewport::process_event(const sf::Event& c_event) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  switch (c_event.type) {
+    case sf::Event::MouseWheelScrolled: {
+      if (c_event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
+          if (c_event.mouseWheelScroll.delta > 0)
+            this->m_zoom =
+                std::min(this->m_zoom * this->mc_zoomStep, this->mc_minZoom);
+          else {
+            this->m_zoom =
+                std::max(this->m_zoom / this->mc_zoomStep, this->mc_maxZoom);
+          }
+        }
+      }
+      break;
+    }
+  }
+}
+
 void viewport::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
@@ -83,27 +102,6 @@ void viewport::draw() const noexcept {
     ImGui::EndChild();
   }
   ImGui::End();
-}
-
-void viewport::process_event(const sf::Event& c_event) noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  switch (c_event.type) {
-    case sf::Event::MouseWheelScrolled: {
-      if (c_event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-        if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-          if (c_event.mouseWheelScroll.delta > 0)
-            this->m_zoom =
-                std::min(this->m_zoom * this->mc_zoomStep, this->mc_minZoom);
-          else {
-            this->m_zoom =
-                std::max(this->m_zoom / this->mc_zoomStep, this->mc_maxZoom);
-          }
-        }
-      }
-      break;
-    }
-  }
 }
 
 }  // namespace library

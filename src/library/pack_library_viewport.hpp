@@ -8,23 +8,22 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Window/Event.hpp>
-#include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <memory>
-#include <string>
 #include <string_view>
 
 #include "abstract/pack_library_abstract_brain.hpp"
+#include "abstract/pack_library_abstract_widget.hpp"
 #include "pack_library_canvas.hpp"
 
 namespace pack {
 namespace library {
 
-class viewport final : private boost::noncopyable {
+class viewport final : public abstract::widget {
  public:
   explicit viewport(const std::uint32_t c_width, const std::uint32_t c_height,
-                    const float c_minZoom, const float c_maxZoom,
-                    const float c_zoomStep, const std::string_view c_title,
+                    const std::string_view c_title, const float c_minZoom,
+                    const float c_maxZoom, const float c_zoomStep,
                     const std::uint32_t c_canvasWidth,
                     const std::uint32_t c_canvasHeight) noexcept;
   /* virtual */ ~viewport() noexcept;
@@ -44,19 +43,16 @@ class viewport final : private boost::noncopyable {
            std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept;
 
   void tick(const float c_dt) noexcept;
-  void draw() const noexcept;
 
   void process_event(const sf::Event& c_event) noexcept;
 
- private:
-  const std::uint32_t mc_width;
-  const std::uint32_t mc_height;
+ public:
+  void draw() const noexcept override;
 
+ private:
   const float mc_minZoom;
   const float mc_maxZoom;
   const float mc_zoomStep;
-
-  const std::string mc_title;
 
  private:
   float m_zoom;

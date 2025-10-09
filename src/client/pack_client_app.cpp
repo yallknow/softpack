@@ -9,14 +9,15 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
-#include <memory>
 #include <string_view>
+#include <type_traits>
 #include <vector>
 
 #include "../library/pack_library_math.hpp"
@@ -30,6 +31,15 @@ namespace client {
 namespace {
 
 constexpr std::uint32_t gsc_worldScale{5u};
+constexpr std::uint32_t gsc_borderSize{36u};
+constexpr std::uint32_t gsc_iterationsCount{6u};
+constexpr std::uint32_t gsc_windowFramerateLimit{60u};
+
+constexpr float gsc_defaultTimestep{1.0f / 600.0f};
+
+constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
+
+constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 
 // viewport
 constexpr std::uint32_t gsc_viewportWidth{1'280u};
@@ -37,7 +47,7 @@ constexpr std::uint32_t gsc_viewportHeight{720u};
 
 constexpr float gsc_minZoom{5.0f};
 constexpr float gsc_maxZoom{1.0f};
-constexpr float gsc_zoomStep{1.0f};
+constexpr float gsc_zoomStep{1.1f};
 
 constexpr std::string_view gsc_viewportTitle{"viewport"};
 
@@ -45,29 +55,20 @@ constexpr std::uint32_t gsc_canvasWidth{gsc_viewportWidth * gsc_worldScale};
 constexpr std::uint32_t gsc_canvasHeight{gsc_viewportHeight * gsc_worldScale};
 // !viewport
 
-constexpr std::string_view gsc_windowTitle{"softpack"};
-constexpr std::string_view gsc_minimapTitle{"minimap"};
-constexpr std::string_view gsc_scenePath{"scene/demo.json"};
-
-constexpr std::uint32_t gsc_windowFramerateLimit{60u};
-
-constexpr std::uint32_t gsc_borderSize{36u};
+// minimap
 constexpr std::uint32_t gsc_minimapWidth{gsc_viewportWidth / gsc_worldScale};
 constexpr std::uint32_t gsc_minimapHeight{gsc_viewportHeight / gsc_worldScale};
+
+constexpr std::string_view gsc_minimapTitle{"minimap"};
+// !minimap
+
+// window
+constexpr std::string_view gsc_windowTitle{"softpack"};
+
 constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_minimapWidth +
                                         gsc_borderSize};
 constexpr std::uint32_t gsc_windowHeight{gsc_viewportHeight + gsc_borderSize};
-
-constexpr std::int32_t gsc_iterationsCount{6};
-
-constexpr ImVec2 gsc_viewportSize{gsc_viewportWidth, gsc_viewportHeight};
-constexpr ImVec2 gsc_minimapSize{gsc_minimapWidth, gsc_minimapHeight};
-constexpr ImVec2 gsc_lowerLeft{0, 1};
-constexpr ImVec2 gsc_upperRight{1, 0};
-
-constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
-
-constexpr float gsc_defaultTimestep{1.0f / 600.f};
+// !window
 
 }  // namespace
 
@@ -75,9 +76,10 @@ app::app() noexcept
     : m_worldId{},
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
-      m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_minZoom,
-                 gsc_maxZoom,       gsc_zoomStep,       gsc_viewportTitle,
-                 gsc_canvasWidth,   gsc_canvasHeight} {
+      m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_viewportTitle,
+                 gsc_minZoom,       gsc_maxZoom,        gsc_zoomStep,
+                 gsc_canvasWidth,   gsc_canvasHeight},
+      m_minimap{gsc_minimapWidth, gsc_minimapHeight, gsc_minimapTitle} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -180,46 +182,10 @@ void app::main_loop() noexcept {
 
     this->m_viewport.draw();
 
-    const ImTextureID c_textureId{static_cast<ImTextureID>(
-        this->m_viewport.get_texture().getTexture().getNativeHandle())};
-
-    if (ImGui::Begin(gsc_viewportTitle.data(), nullptr,
-                     ImGuiWindowFlags_NoScrollbar |
-                         ImGuiWindowFlags_NoScrollWithMouse)) {
-      ImGui::BeginChild(
-          gsc_viewportTitle.data(), gsc_viewportSize, false,
-          ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-      const ImVec2 c_full = ImGui::GetContentRegionAvail();
-      const ImVec2 c_zoomed{c_full.x * gs_zoom, c_full.y * gs_zoom};
-
-      ImGui::Image(c_textureId, c_zoomed, gsc_lowerLeft, gsc_upperRight);
-
-      ImGui::EndChild();
-    }
-    ImGui::End();
-
-    if (ImGui::Begin(gsc_minimapTitle.data(), nullptr,
-                     ImGuiWindowFlags_NoScrollbar |
-                         ImGuiWindowFlags_NoScrollWithMouse)) {
-      ImGui::BeginChild(
-          gsc_minimapTitle.data(), gsc_minimapSize, false,
-          ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-      const ImVec2 c_position = ImGui::GetCursorScreenPos();
-
-      ImGui::Image(c_textureId, gsc_minimapSize, gsc_lowerLeft, gsc_upperRight);
-
-      const ImVec2 c_viewMin{c_position.x, c_position.y};
-      const ImVec2 c_viewMax{c_position.x + gsc_minimapWidth / gs_zoom,
-                             c_position.y + gsc_minimapHeight / gs_zoom};
-
-      ImGui::GetWindowDrawList()->AddRect(
-          c_viewMin, c_viewMax, IM_COL32(255, 0, 0, 255), 0.0f, 0, 1.0f);
-
-      ImGui::EndChild();
-    }
-    ImGui::End();
+    this->m_minimap.set_zoom(this->m_viewport.get_zoom());
+    this->m_minimap.set_texture_id(
+        this->m_viewport.get_texture().getTexture().getNativeHandle());
+    this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);
 

@@ -3,16 +3,15 @@
 #ifndef PACK_LIBRARY_MINIMAP
 #define PACK_LIBRARY_MINIMAP
 
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <boost/core/noncopyable.hpp>
 #include <cstdint>
-#include <string>
 #include <string_view>
+
+#include "abstract/pack_library_abstract_widget.hpp"
 
 namespace pack {
 namespace library {
 
-class minimap final : private boost::noncopyable {
+class minimap final : public abstract::widget {
  public:
   explicit minimap(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::string_view c_title) noexcept;
@@ -23,14 +22,15 @@ class minimap final : private boost::noncopyable {
   minimap& operator=(minimap&& otherRLink) noexcept = delete;
 
  public:
-  void draw(const sf::RenderTexture& c_texture,
-            const float c_zoom) const noexcept;
+  void set_texture_id(const std::uint32_t c_textureId) noexcept;
+  void set_zoom(const float c_zoom) noexcept;
+
+ public:
+  void draw() const noexcept override;
 
  private:
-  const std::uint32_t mc_width;
-  const std::uint32_t mc_height;
-
-  const std::string mc_title;
+  float m_zoom;
+  std::uint64_t m_textureId;
 };
 
 }  // namespace library
