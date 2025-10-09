@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <type_traits>
 #include <utility>
@@ -32,7 +33,13 @@ viewport::~viewport() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 const sf::RenderTexture& viewport::get_texture() const {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_canvas.get_texture();
+  return this->m_canvas.get_texture();
+}
+
+float viewport::get_zoom() const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  return this->m_zoom;
 }
 
 void viewport::add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink,

@@ -37,6 +37,9 @@ class viewport final : private boost::noncopyable {
   const sf::RenderTexture& get_texture() const;
 
  public:
+  float get_zoom() const noexcept;
+
+ public:
   void add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink, const b2BodyId c_bodyId,
            std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept;
 
