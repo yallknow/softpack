@@ -4,6 +4,7 @@
 #define PACK_LIBRARY_VIEWPORT
 
 #include <SFML/Graphics/View.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <cstdint>
 #include <string_view>
@@ -39,6 +40,9 @@ class viewport final : public abstract::widget {
   const float mc_maxZoom;
 
  private:
+  bool m_dragging;
+  sf::Vector2i m_mousePosition;
+
   std::uint64_t m_textureId;
   sf::View m_view;
   canvas m_canvas;

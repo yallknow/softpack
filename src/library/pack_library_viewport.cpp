@@ -6,7 +6,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <algorithm>
 #include <utility>
@@ -22,6 +21,8 @@ viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::uint32_t c_canvasHeight) noexcept
     : abstract::widget{c_width, c_height, c_title},
       mc_maxZoom{c_maxZoom},
+      m_dragging{false},
+      m_mousePosition{0, 0},
       m_view{sf::FloatRect(0.0f, 0.0f, c_width, c_height)},
       m_canvas{c_canvasWidth, c_canvasHeight},
       m_textureId{0u} {
@@ -50,7 +51,7 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
           this->m_view.zoom(c_event.mouseWheelScroll.delta > 0 ? 0.9f : 1.1f);
 
           sf::Vector2f viewSize{this->m_view.getSize()};
-          sf::Vector2f c_textureSize{
+          const sf::Vector2f c_textureSize{
               static_cast<float>(this->m_canvas.get_texture().getSize().x),
               static_cast<float>(this->m_canvas.get_texture().getSize().y)};
 
