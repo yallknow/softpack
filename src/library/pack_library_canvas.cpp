@@ -45,7 +45,7 @@ void canvas::draw() const noexcept {
   }
 }
 
-const sf::RenderTexture& canvas::get_texture() const {
+sf::RenderTexture& canvas::get_texture() const {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return *this->m_textureSPtr;

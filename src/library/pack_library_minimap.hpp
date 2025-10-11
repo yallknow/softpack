@@ -14,7 +14,8 @@ namespace library {
 class minimap final : public abstract::widget {
  public:
   explicit minimap(const std::uint32_t c_width, const std::uint32_t c_height,
-                   const std::string_view c_title) noexcept;
+                   const std::string_view c_title,
+                   const std::uint32_t c_textureId) noexcept;
   /* virtual */ ~minimap() noexcept;
 
  public:
@@ -22,15 +23,10 @@ class minimap final : public abstract::widget {
   minimap& operator=(minimap&& otherRLink) noexcept = delete;
 
  public:
-  void set_texture_id(const std::uint32_t c_textureId) noexcept;
-  void set_zoom(const float c_zoom) noexcept;
-
- public:
   void draw() const noexcept override;
 
  private:
-  float m_zoom;
-  std::uint64_t m_textureId;
+  const std::uint64_t mc_textureId;
 };
 
 }  // namespace library

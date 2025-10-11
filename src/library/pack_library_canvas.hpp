@@ -35,7 +35,7 @@ class canvas final : private boost::noncopyable {
   void tick(const float c_dt) noexcept;
   void draw() const noexcept;
 
-  const sf::RenderTexture& get_texture() const;
+  sf::RenderTexture& get_texture() const;
 
  private:
   std::shared_ptr<sf::RenderTexture> m_textureSPtr;

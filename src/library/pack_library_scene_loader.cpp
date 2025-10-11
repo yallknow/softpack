@@ -65,7 +65,7 @@ enum class brain { WANDER = 0 };
 bool contains_key(const Json::Value& c_value, const std::string_view key) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  const bool c_result = c_value.isMember(key.data());
+  const bool c_result{c_value.isMember(key.data())};
 
   if (!c_result) {
     PACK_LIBRARY_LOG_WARNING("Could not find JSON property: " +
@@ -129,8 +129,8 @@ std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (contains_key(c_value, key)) {
-    const auto c_x = get_float(c_value[key.data()], gsc_xProp);
-    const auto c_y = get_float(c_value[key.data()], gsc_yProp);
+    const auto c_x{get_float(c_value[key.data()], gsc_xProp)};
+    const auto c_y{get_float(c_value[key.data()], gsc_yProp)};
 
     if (c_x && c_y) {
       return sf::Vector2f{c_x.value(), c_y.value()};
@@ -143,20 +143,20 @@ std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
 void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (const auto c_origin = get_vector2f(c_entity, gsc_originProp)) {
+  if (const auto c_origin{get_vector2f(c_entity, gsc_originProp)}) {
     shapeLink.setOrigin(c_origin.value());
   }
 
-  if (const auto c_position = get_vector2f(c_entity, gsc_positionProp)) {
+  if (const auto c_position{get_vector2f(c_entity, gsc_positionProp)}) {
     shapeLink.setPosition(c_position.value());
   }
 
   if (contains_key(c_entity, gsc_colorProp)) {
     const Json::Value& c_color{c_entity[gsc_colorProp.data()]};
 
-    const auto c_red = get_int(c_color, gsc_redProp);
-    const auto c_green = get_int(c_color, gsc_greenProp);
-    const auto c_blue = get_int(c_color, gsc_blueProp);
+    const auto c_red{get_int(c_color, gsc_redProp)};
+    const auto c_green{get_int(c_color, gsc_greenProp)};
+    const auto c_blue{get_int(c_color, gsc_blueProp)};
 
     if (c_red && c_green && c_blue) {
       shapeLink.setFillColor(sf::Color{static_cast<sf::Uint8>(c_red.value()),
@@ -170,32 +170,32 @@ void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
                b2ShapeDef& shapeDefLink) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (const auto c_type = get_int(c_body, gsc_typeProp)) {
+  if (const auto c_type{get_int(c_body, gsc_typeProp)}) {
     bodyDefLink.type = static_cast<b2BodyType>(c_type.value());
   }
 
-  if (const auto c_position = get_vector2f(c_body, gsc_positionProp)) {
+  if (const auto c_position{get_vector2f(c_body, gsc_positionProp)}) {
     bodyDefLink.position = b2Vec2{c_position.value().x / gsc_scale,
                                   c_position.value().y / gsc_scale};
   }
 
-  if (const auto c_linearDamping = get_float(c_body, gsc_linearDampingProp)) {
+  if (const auto c_linearDamping{get_float(c_body, gsc_linearDampingProp)}) {
     bodyDefLink.linearDamping = c_linearDamping.value();
   }
 
-  if (const auto c_angularDamping = get_float(c_body, gsc_angularDampingProp)) {
+  if (const auto c_angularDamping{get_float(c_body, gsc_angularDampingProp)}) {
     bodyDefLink.angularDamping = c_angularDamping.value();
   }
 
-  if (const auto c_density = get_float(c_body, gsc_densityProp)) {
+  if (const auto c_density{get_float(c_body, gsc_densityProp)}) {
     shapeDefLink.density = c_density.value();
   }
 
-  if (const auto c_friction = get_float(c_body, gsc_frictionProp)) {
+  if (const auto c_friction{get_float(c_body, gsc_frictionProp)}) {
     shapeDefLink.material.friction = c_friction.value();
   }
 
-  if (const auto c_restitution = get_float(c_body, gsc_restitutionProp)) {
+  if (const auto c_restitution{get_float(c_body, gsc_restitutionProp)}) {
     shapeDefLink.material.restitution = c_restitution.value();
   }
 }
@@ -203,22 +203,22 @@ void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
 std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (const auto c_type = get_int(c_brain, gsc_typeProp)) {
+  if (const auto c_type{get_int(c_brain, gsc_typeProp)}) {
     if (static_cast<brain>(c_type.value()) == brain::WANDER) {
       sf::Vector2f velocity{0.0f, 0.0f};
       sf::Vector2f maxVelocity{0.0f, 0.0f};
       float jitterStep{0.0f};
 
-      if (const auto c_velocity = get_vector2f(c_brain, gsc_velocityProp)) {
+      if (const auto c_velocity{get_vector2f(c_brain, gsc_velocityProp)}) {
         velocity = c_velocity.value();
       }
 
-      if (const auto c_maxVelocity =
-              get_vector2f(c_brain, gsc_maxVelocityProp)) {
+      if (const auto c_maxVelocity{
+              get_vector2f(c_brain, gsc_maxVelocityProp)}) {
         maxVelocity = c_maxVelocity.value();
       }
 
-      if (const auto c_jitterStep = get_float(c_brain, gsc_jitterStepProp)) {
+      if (const auto c_jitterStep{get_float(c_brain, gsc_jitterStepProp)}) {
         jitterStep = c_jitterStep.value();
       }
 
@@ -245,7 +245,7 @@ void load_entities(const Json::Value& c_root,
       if (c_shape.value() == gsc_circleShape) {
         auto circleUPtr{std::make_unique<sf::CircleShape>()};
 
-        if (const auto c_radius = get_float(c_entity, gsc_radiusProp)) {
+        if (const auto c_radius{get_float(c_entity, gsc_radiusProp)}) {
           circleUPtr->setRadius(c_radius.value());
         }
 
@@ -253,7 +253,7 @@ void load_entities(const Json::Value& c_root,
       } else if (c_shape.value() == gsc_rectangleShape) {
         auto rectangleUPtr{std::make_unique<sf::RectangleShape>()};
 
-        if (const auto c_size = get_vector2f(c_entity, gsc_sizeProp)) {
+        if (const auto c_size{get_vector2f(c_entity, gsc_sizeProp)}) {
           rectangleUPtr->setSize(c_size.value());
         }
 

@@ -2,9 +2,13 @@
 
 #include <imgui.h>
 
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <type_traits>
+#include <algorithm>
 #include <utility>
 
 #include "pack_library_preprocessor.hpp"
@@ -13,46 +17,27 @@ namespace pack {
 namespace library {
 
 viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
-                   const std::string_view c_title, const float c_minZoom,
-                   const float c_maxZoom, const float c_zoomStep,
+                   const std::string_view c_title, const float c_maxZoom,
                    const std::uint32_t c_canvasWidth,
                    const std::uint32_t c_canvasHeight) noexcept
     : abstract::widget{c_width, c_height, c_title},
-      mc_minZoom{c_minZoom},
       mc_maxZoom{c_maxZoom},
-      mc_zoomStep{c_zoomStep},
-      m_zoom{c_maxZoom},
-      m_canvas{c_canvasWidth, c_canvasHeight} {
+      m_view{sf::FloatRect(0.0f, 0.0f, c_width, c_height)},
+      m_canvas{c_canvasWidth, c_canvasHeight},
+      m_textureId{0u} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
+  this->m_textureId =
+      this->m_canvas.get_texture().getTexture().getNativeHandle();
+
+  this->m_view.setCenter(c_width * 0.5f, c_height * 0.5f);
 }
 
 viewport::~viewport() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-const sf::RenderTexture& viewport::get_texture() const {
+canvas& viewport::get_canvas() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  return this->m_canvas.get_texture();
-}
-
-float viewport::get_zoom() const noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  return this->m_zoom;
-}
-
-void viewport::add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
-                   const b2BodyId c_bodyId,
-                   std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_canvas.add(std::move(shapeUPtrRLink), c_bodyId,
-                     std::move(brainUPtrRLink));
-}
-
-void viewport::tick(const float c_dt) noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_canvas.tick(c_dt);
+  return this->m_canvas;
 }
 
 void viewport::process_event(const sf::Event& c_event) noexcept {
@@ -62,13 +47,28 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
     case sf::Event::MouseWheelScrolled: {
       if (c_event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-          if (c_event.mouseWheelScroll.delta > 0)
-            this->m_zoom =
-                std::min(this->m_zoom * this->mc_zoomStep, this->mc_minZoom);
-          else {
-            this->m_zoom =
-                std::max(this->m_zoom / this->mc_zoomStep, this->mc_maxZoom);
-          }
+          this->m_view.zoom(c_event.mouseWheelScroll.delta > 0 ? 0.9f : 1.1f);
+
+          sf::Vector2f viewSize{this->m_view.getSize()};
+          sf::Vector2f c_textureSize{
+              static_cast<float>(this->m_canvas.get_texture().getSize().x),
+              static_cast<float>(this->m_canvas.get_texture().getSize().y)};
+
+          viewSize.x = std::min(viewSize.x, c_textureSize.x);
+          viewSize.y = std::min(viewSize.y, c_textureSize.y);
+          viewSize.x = std::max(viewSize.x, c_textureSize.x / this->mc_maxZoom);
+          viewSize.y = std::max(viewSize.y, c_textureSize.y / this->mc_maxZoom);
+
+          const sf::Vector2f c_viewHalf{viewSize * 0.5f};
+          sf::Vector2f viewCenter{this->m_view.getCenter()};
+
+          viewCenter.x = std::clamp(viewCenter.x, c_viewHalf.x,
+                                    c_textureSize.x - c_viewHalf.x);
+          viewCenter.y = std::clamp(viewCenter.y, c_viewHalf.y,
+                                    c_textureSize.y - c_viewHalf.y);
+
+          this->m_view.setSize(viewSize);
+          this->m_view.setCenter(viewCenter);
         }
       }
       break;
@@ -79,10 +79,8 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
 void viewport::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
+  this->m_canvas.get_texture().setView(this->m_view);
   this->m_canvas.draw();
-
-  const ImTextureID c_textureId{static_cast<ImTextureID>(
-      this->m_canvas.get_texture().getTexture().getNativeHandle())};
 
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,
@@ -93,11 +91,8 @@ void viewport::draw() const noexcept {
                static_cast<float>(this->mc_height)},
         false,
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-    const ImVec2 c_full = ImGui::GetContentRegionAvail();
-    const ImVec2 c_zoomed{c_full.x * this->m_zoom, c_full.y * this->m_zoom};
-
-    ImGui::Image(c_textureId, c_zoomed, ImVec2{0, 1}, ImVec2{1, 0});
+    ImGui::Image(this->m_textureId, ImGui::GetContentRegionAvail(),
+                 ImVec2{0.0f, 1.0f}, ImVec2{1.0f, 0.0f});
 
     ImGui::EndChild();
   }

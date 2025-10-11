@@ -45,9 +45,7 @@ constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 constexpr std::uint32_t gsc_viewportWidth{1'280u};
 constexpr std::uint32_t gsc_viewportHeight{720u};
 
-constexpr float gsc_minZoom{5.0f};
-constexpr float gsc_maxZoom{1.0f};
-constexpr float gsc_zoomStep{1.1f};
+constexpr float gsc_maxZoom{10.0f};
 
 constexpr std::string_view gsc_viewportTitle{"viewport"};
 
@@ -77,9 +75,12 @@ app::app() noexcept
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
       m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_viewportTitle,
-                 gsc_minZoom,       gsc_maxZoom,        gsc_zoomStep,
-                 gsc_canvasWidth,   gsc_canvasHeight},
-      m_minimap{gsc_minimapWidth, gsc_minimapHeight, gsc_minimapTitle} {
+                 gsc_maxZoom,       gsc_canvasWidth,    gsc_canvasHeight},
+      m_minimap{gsc_minimapWidth, gsc_minimapHeight, gsc_minimapTitle,
+                this->m_viewport.get_canvas()
+                    .get_texture()
+                    .getTexture()
+                    .getNativeHandle()} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -143,8 +144,8 @@ void app::load_scene() noexcept {
       continue;
     }
 
-    this->m_viewport.add(std::move(entity.m_shapeUPtr), c_bodyId,
-                         std::move(entity.m_brainUPtr));
+    this->m_viewport.get_canvas().add(std::move(entity.m_shapeUPtr), c_bodyId,
+                                      std::move(entity.m_brainUPtr));
   }
 }
 
@@ -173,7 +174,7 @@ void app::main_loop() noexcept {
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->m_viewport.tick(c_dt_seconds);
+    this->m_viewport.get_canvas().tick(c_dt_seconds);
 
     while (timeAccumulator >= gsc_defaultTimestep) {
       b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);
@@ -181,10 +182,6 @@ void app::main_loop() noexcept {
     }
 
     this->m_viewport.draw();
-
-    this->m_minimap.set_zoom(this->m_viewport.get_zoom());
-    this->m_minimap.set_texture_id(
-        this->m_viewport.get_texture().getTexture().getNativeHandle());
     this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);
