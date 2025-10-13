@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/View.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <algorithm>
 #include <utility>
@@ -18,14 +19,15 @@ viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::string_view c_title, const float c_maxZoom,
                    const std::uint32_t c_textureWidth,
                    const std::uint32_t c_textureHeight) noexcept
-    : abstract::widget{c_width, c_height, c_title, c_width, c_height},
+    : abstract::widget{c_width, c_height, c_title, c_textureWidth,
+                       c_textureHeight},
       mc_maxZoom{c_maxZoom},
       m_dragging{false},
       m_lastPosition{0, 0},
       m_canvas{c_textureWidth, c_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_view.setCenter(c_width * 0.5f, c_height * 0.5f);
+  this->m_view.setCenter(c_textureWidth * 0.5f, c_textureHeight * 0.5f);
 }
 
 viewport::~viewport() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }

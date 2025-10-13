@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 
+#include <SFML/Graphics/View.hpp>
+
 #include "pack_library_preprocessor.hpp"
 
 namespace pack {
@@ -16,6 +18,8 @@ minimap::minimap(const std::uint32_t c_width, const std::uint32_t c_height,
       mc_textureId{c_textureId},
       mc_textureSize{c_textureSize} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_view.setCenter(c_textureSize.x * 0.5f, c_textureSize.y * 0.5f);
 }
 
 minimap::~minimap() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
