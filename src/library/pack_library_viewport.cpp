@@ -2,7 +2,6 @@
 
 #include <imgui.h>
 
-#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -19,8 +18,7 @@ viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::string_view c_title, const float c_maxZoom,
                    const std::uint32_t c_textureWidth,
                    const std::uint32_t c_textureHeight) noexcept
-    : abstract::widget{c_width, c_height, c_title, c_textureWidth,
-                       c_textureHeight},
+    : abstract::widget{c_width, c_height, c_title, c_width, c_height},
       mc_maxZoom{c_maxZoom},
       m_dragging{false},
       m_lastPosition{0, 0},
