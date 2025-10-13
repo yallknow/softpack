@@ -16,7 +16,7 @@ minimap::minimap(const std::uint32_t c_width, const std::uint32_t c_height,
 
 minimap::~minimap() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-void minimap::draw() const noexcept {
+void minimap::draw() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   const ImVec2 c_size = ImVec2{static_cast<float>(this->mc_width),
@@ -31,9 +31,19 @@ void minimap::draw() const noexcept {
     ImGui::Image(this->mc_textureId, c_size, ImVec2{0.0f, 1.0f},
                  ImVec2{1.0f, 0.0f});
 
+    this->fill_image_stats();
+
     ImGui::EndChild();
   }
   ImGui::End();
+}
+
+void minimap::process_event(const sf::Event& c_event) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  if (!this->m_isHovered) {
+    return;
+  }
 }
 
 }  // namespace library

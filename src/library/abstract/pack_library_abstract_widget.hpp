@@ -3,6 +3,8 @@
 #ifndef PACK_LIBRARY_ABSTRACT_WIDGET
 #define PACK_LIBRARY_ABSTRACT_WIDGET
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <cstdint>
 #include <string>
@@ -23,13 +25,22 @@ class widget /* final */ : private boost::noncopyable {
   widget& operator=(widget&& otherRLink) noexcept = delete;
 
  public:
-  virtual void draw() const noexcept = 0;
+  virtual void draw() noexcept = 0;
+  virtual void process_event(const sf::Event& c_event) noexcept = 0;
+
+ protected:
+  void fill_image_stats() noexcept;
 
  protected:
   const std::uint32_t mc_width;
   const std::uint32_t mc_height;
 
   const std::string mc_title;
+
+ protected:
+  bool m_isHovered;
+  sf::Vector2f m_imageMin;
+  sf::Vector2f m_imageMax;
 };
 
 }  // namespace abstract

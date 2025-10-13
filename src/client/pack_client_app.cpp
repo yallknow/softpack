@@ -199,6 +199,7 @@ void app::poll_events() noexcept {
     ImGui::SFML::ProcessEvent(this->m_window, event);
 
     this->m_viewport.process_event(event);
+    this->m_minimap.process_event(event);
 
     switch (event.type) {
       case sf::Event::Closed: {

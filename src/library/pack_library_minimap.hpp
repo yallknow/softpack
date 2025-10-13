@@ -3,6 +3,7 @@
 #ifndef PACK_LIBRARY_MINIMAP
 #define PACK_LIBRARY_MINIMAP
 
+#include <SFML/Window/Event.hpp>
 #include <cstdint>
 #include <string_view>
 
@@ -22,8 +23,9 @@ class minimap final : public abstract::widget {
   explicit minimap(minimap&& otherRLink) noexcept = delete;
   minimap& operator=(minimap&& otherRLink) noexcept = delete;
 
- public:
-  void draw() const noexcept override;
+ public:  // abstract::widget
+  void draw() noexcept override;
+  void process_event(const sf::Event& c_event) noexcept override;
 
  private:
   const std::uint64_t mc_textureId;

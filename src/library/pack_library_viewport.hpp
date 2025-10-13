@@ -30,11 +30,9 @@ class viewport final : public abstract::widget {
  public:
   canvas& get_canvas() noexcept;
 
- public:
-  void process_event(const sf::Event& c_event) noexcept;
-
- public:
-  void draw() const noexcept override;
+ public:  // abstract::widget
+  void draw() noexcept override;
+  void process_event(const sf::Event& c_event) noexcept override;
 
  private:
   const float mc_maxZoom;
@@ -43,7 +41,6 @@ class viewport final : public abstract::widget {
   bool m_dragging;
   sf::Vector2i m_lastPosition;
 
-  std::uint64_t m_textureId;
   sf::View m_view;
   canvas m_canvas;
 };
