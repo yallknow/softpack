@@ -19,19 +19,17 @@ minimap::~minimap() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 void minimap::draw() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
+  const ImVec2 c_size = ImVec2{static_cast<float>(this->mc_width),
+                               static_cast<float>(this->mc_height)};
+
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,
           ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
     ImGui::BeginChild(
-        this->mc_title.data(),
-        ImVec2{static_cast<float>(this->mc_width),
-               static_cast<float>(this->mc_height)},
-        false,
+        this->mc_title.data(), c_size, false,
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-    ImGui::Image(this->mc_textureId,
-                 ImVec2{static_cast<float>(this->mc_width),
-                        static_cast<float>(this->mc_height)},
-                 ImVec2{0.0f, 1.0f}, ImVec2{1.0f, 0.0f});
+    ImGui::Image(this->mc_textureId, c_size, ImVec2{0.0f, 1.0f},
+                 ImVec2{1.0f, 0.0f});
 
     ImGui::EndChild();
   }

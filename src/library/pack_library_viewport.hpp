@@ -41,7 +41,7 @@ class viewport final : public abstract::widget {
 
  private:
   bool m_dragging;
-  sf::Vector2i m_mousePosition;
+  sf::Vector2i m_lastPosition;
 
   std::uint64_t m_textureId;
   sf::View m_view;
