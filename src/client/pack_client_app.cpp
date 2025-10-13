@@ -80,7 +80,8 @@ app::app() noexcept
                 this->m_viewport.get_canvas()
                     .get_texture()
                     .getTexture()
-                    .getNativeHandle()} {
+                    .getNativeHandle(),
+                this->m_viewport.get_canvas().get_texture().getSize()} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -182,6 +183,7 @@ void app::main_loop() noexcept {
     }
 
     this->m_viewport.draw();
+    this->m_minimap.set_view(this->m_viewport.get_view());
     this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);

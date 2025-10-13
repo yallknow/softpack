@@ -3,7 +3,6 @@
 #ifndef PACK_LIBRARY_VIEWPORT
 #define PACK_LIBRARY_VIEWPORT
 
-#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <cstdint>
@@ -19,8 +18,8 @@ class viewport final : public abstract::widget {
  public:
   explicit viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                     const std::string_view c_title, const float c_maxZoom,
-                    const std::uint32_t c_canvasWidth,
-                    const std::uint32_t c_canvasHeight) noexcept;
+                    const std::uint32_t c_textureWidth,
+                    const std::uint32_t c_textureHeight) noexcept;
   /* virtual */ ~viewport() noexcept;
 
  public:
@@ -41,7 +40,6 @@ class viewport final : public abstract::widget {
   bool m_dragging;
   sf::Vector2i m_lastPosition;
 
-  sf::View m_view;
   canvas m_canvas;
 };
 

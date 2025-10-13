@@ -17,14 +17,14 @@ namespace library {
 
 viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::string_view c_title, const float c_maxZoom,
-                   const std::uint32_t c_canvasWidth,
-                   const std::uint32_t c_canvasHeight) noexcept
-    : abstract::widget{c_width, c_height, c_title},
+                   const std::uint32_t c_textureWidth,
+                   const std::uint32_t c_textureHeight) noexcept
+    : abstract::widget{c_width, c_height, c_title, c_textureWidth,
+                       c_textureHeight},
       mc_maxZoom{c_maxZoom},
       m_dragging{false},
       m_lastPosition{0, 0},
-      m_view{sf::FloatRect(0.0f, 0.0f, c_width, c_height)},
-      m_canvas{c_canvasWidth, c_canvasHeight} {
+      m_canvas{c_textureWidth, c_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_view.setCenter(c_width * 0.5f, c_height * 0.5f);
@@ -44,8 +44,8 @@ void viewport::draw() noexcept {
   this->m_canvas.get_texture().setView(this->m_view);
   this->m_canvas.draw();
 
-  const ImVec2 c_size = ImVec2{static_cast<float>(this->mc_width),
-                               static_cast<float>(this->mc_height)};
+  const ImVec2 c_size{static_cast<float>(this->mc_width),
+                      static_cast<float>(this->mc_height)};
 
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,

@@ -9,8 +9,12 @@ namespace library {
 
 minimap::minimap(const std::uint32_t c_width, const std::uint32_t c_height,
                  const std::string_view c_title,
-                 const std::uint32_t c_textureId) noexcept
-    : abstract::widget{c_width, c_height, c_title}, mc_textureId{c_textureId} {
+                 const std::uint32_t c_textureId,
+                 const sf::Vector2u& c_textureSize) noexcept
+    : abstract::widget{c_width, c_height, c_title, c_textureSize.x,
+                       c_textureSize.y},
+      mc_textureId{c_textureId},
+      mc_textureSize{c_textureSize} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
@@ -19,8 +23,8 @@ minimap::~minimap() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 void minimap::draw() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  const ImVec2 c_size = ImVec2{static_cast<float>(this->mc_width),
-                               static_cast<float>(this->mc_height)};
+  const ImVec2 c_size{static_cast<float>(this->mc_width),
+                      static_cast<float>(this->mc_height)};
 
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,

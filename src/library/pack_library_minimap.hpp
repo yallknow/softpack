@@ -3,6 +3,7 @@
 #ifndef PACK_LIBRARY_MINIMAP
 #define PACK_LIBRARY_MINIMAP
 
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <cstdint>
 #include <string_view>
@@ -16,7 +17,8 @@ class minimap final : public abstract::widget {
  public:
   explicit minimap(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::string_view c_title,
-                   const std::uint32_t c_textureId) noexcept;
+                   const std::uint32_t c_textureId,
+                   const sf::Vector2u& c_textureSize) noexcept;
   /* virtual */ ~minimap() noexcept;
 
  public:
@@ -29,6 +31,7 @@ class minimap final : public abstract::widget {
 
  private:
   const std::uint64_t mc_textureId;
+  const sf::Vector2u mc_textureSize;
 };
 
 }  // namespace library
