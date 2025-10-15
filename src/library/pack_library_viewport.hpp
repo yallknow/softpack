@@ -9,7 +9,7 @@
 #include <string_view>
 
 #include "abstract/pack_library_abstract_widget.hpp"
-#include "pack_library_canvas.hpp"
+#include "pack_library_scene.hpp"
 
 namespace pack {
 namespace library {
@@ -17,17 +17,15 @@ namespace library {
 class viewport final : public abstract::widget {
  public:
   explicit viewport(const std::uint32_t c_width, const std::uint32_t c_height,
-                    const std::string_view c_title, const float c_maxZoom,
+                    const std::string_view c_title, const scene& c_scene,
                     const std::uint32_t c_textureWidth,
-                    const std::uint32_t c_textureHeight) noexcept;
+                    const std::uint32_t c_textureHeight,
+                    const float c_maxZoom) noexcept;
   /* virtual */ ~viewport() noexcept;
 
  public:
   explicit viewport(viewport&& otherRLink) noexcept = delete;
   viewport& operator=(viewport&& otherRLink) noexcept = delete;
-
- public:
-  canvas& get_canvas() noexcept;
 
  public:  // abstract::widget
   void draw() noexcept override;
@@ -39,8 +37,6 @@ class viewport final : public abstract::widget {
  private:
   bool m_dragging;
   sf::Vector2i m_lastPosition;
-
-  canvas m_canvas;
 };
 
 }  // namespace library

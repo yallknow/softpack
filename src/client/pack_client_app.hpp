@@ -9,6 +9,7 @@
 #include <boost/core/noncopyable.hpp>
 
 #include "../library/pack_library_minimap.hpp"
+#include "../library/pack_library_scene.hpp"
 #include "../library/pack_library_viewport.hpp"
 
 namespace pack {
@@ -34,6 +35,8 @@ class app final : private boost::noncopyable {
  private:
   b2WorldId m_worldId;
   sf::RenderWindow m_window;
+
+  library::scene m_scene;
   library::viewport m_viewport;
   library::minimap m_minimap;
 };

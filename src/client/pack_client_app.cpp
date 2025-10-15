@@ -9,10 +9,10 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
@@ -36,37 +36,24 @@ constexpr std::uint32_t gsc_iterationsCount{6u};
 constexpr std::uint32_t gsc_windowFramerateLimit{60u};
 
 constexpr float gsc_defaultTimestep{1.0f / 600.0f};
+constexpr float gsc_maxZoom{10.0f};
 
 constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
 
-constexpr std::string_view gsc_scenePath{"scene/demo.json"};
-
-// viewport
 constexpr std::uint32_t gsc_viewportWidth{1'280u};
 constexpr std::uint32_t gsc_viewportHeight{720u};
-
-constexpr float gsc_maxZoom{10.0f};
-
-constexpr std::string_view gsc_viewportTitle{"viewport"};
-
-constexpr std::uint32_t gsc_canvasWidth{gsc_viewportWidth * gsc_worldScale};
-constexpr std::uint32_t gsc_canvasHeight{gsc_viewportHeight * gsc_worldScale};
-// !viewport
-
-// minimap
 constexpr std::uint32_t gsc_minimapWidth{gsc_viewportWidth / gsc_worldScale};
 constexpr std::uint32_t gsc_minimapHeight{gsc_viewportHeight / gsc_worldScale};
-
-constexpr std::string_view gsc_minimapTitle{"minimap"};
-// !minimap
-
-// window
-constexpr std::string_view gsc_windowTitle{"softpack"};
-
+constexpr std::uint32_t gsc_textureWidth{gsc_viewportWidth * gsc_worldScale};
+constexpr std::uint32_t gsc_textureHeight{gsc_viewportHeight * gsc_worldScale};
 constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_minimapWidth +
                                         gsc_borderSize};
 constexpr std::uint32_t gsc_windowHeight{gsc_viewportHeight + gsc_borderSize};
-// !window
+
+constexpr std::string_view gsc_viewportTitle{"viewport"};
+constexpr std::string_view gsc_minimapTitle{"minimap"};
+constexpr std::string_view gsc_windowTitle{"softpack"};
+constexpr std::string_view gsc_scenePath{"scene/demo.json"};
 
 }  // namespace
 
@@ -74,14 +61,12 @@ app::app() noexcept
     : m_worldId{},
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
+      m_scene{},
       m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_viewportTitle,
-                 gsc_maxZoom,       gsc_canvasWidth,    gsc_canvasHeight},
+                 m_scene,           gsc_textureWidth,   gsc_textureHeight,
+                 gsc_maxZoom},
       m_minimap{gsc_minimapWidth, gsc_minimapHeight, gsc_minimapTitle,
-                this->m_viewport.get_canvas()
-                    .get_texture()
-                    .getTexture()
-                    .getNativeHandle(),
-                this->m_viewport.get_canvas().get_texture().getSize()} {
+                m_scene,          gsc_textureWidth,  gsc_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   b2WorldDef worldDef{b2DefaultWorldDef()};
@@ -145,8 +130,8 @@ void app::load_scene() noexcept {
       continue;
     }
 
-    this->m_viewport.get_canvas().add(std::move(entity.m_shapeUPtr), c_bodyId,
-                                      std::move(entity.m_brainUPtr));
+    this->m_scene.add(std::move(entity.m_shapeUPtr), c_bodyId,
+                      std::move(entity.m_brainUPtr));
   }
 }
 
@@ -175,7 +160,7 @@ void app::main_loop() noexcept {
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->m_viewport.get_canvas().tick(c_dt_seconds);
+    this->m_scene.tick(c_dt_seconds);
 
     while (timeAccumulator >= gsc_defaultTimestep) {
       b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);
@@ -183,7 +168,6 @@ void app::main_loop() noexcept {
     }
 
     this->m_viewport.draw();
-    this->m_minimap.set_view(this->m_viewport.get_view());
     this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);

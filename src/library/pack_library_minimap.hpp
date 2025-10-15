@@ -3,12 +3,12 @@
 #ifndef PACK_LIBRARY_MINIMAP
 #define PACK_LIBRARY_MINIMAP
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <cstdint>
 #include <string_view>
 
 #include "abstract/pack_library_abstract_widget.hpp"
+#include "pack_library_scene.hpp"
 
 namespace pack {
 namespace library {
@@ -16,9 +16,9 @@ namespace library {
 class minimap final : public abstract::widget {
  public:
   explicit minimap(const std::uint32_t c_width, const std::uint32_t c_height,
-                   const std::string_view c_title,
-                   const std::uint32_t c_textureId,
-                   const sf::Vector2u& c_textureSize) noexcept;
+                   const std::string_view c_title, const scene& c_scene,
+                   const std::uint32_t c_textureWidth,
+                   const std::uint32_t c_textureHeight) noexcept;
   /* virtual */ ~minimap() noexcept;
 
  public:
@@ -28,10 +28,6 @@ class minimap final : public abstract::widget {
  public:  // abstract::widget
   void draw() noexcept override;
   void process_event(const sf::Event& c_event) noexcept override;
-
- private:
-  const std::uint64_t mc_textureId;
-  const sf::Vector2u mc_textureSize;
 };
 
 }  // namespace library

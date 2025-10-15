@@ -11,33 +11,27 @@ namespace library {
 namespace abstract {
 
 widget::widget(const std::uint32_t c_width, const std::uint32_t c_height,
-               const std::string_view c_title, const std::uint32_t c_viewWidth,
-               const std::uint32_t c_viewHeight) noexcept
+               const std::string_view c_title, const scene& c_scene,
+               const std::uint32_t c_textureWidth,
+               const std::uint32_t c_textureHeight) noexcept
     : mc_width{c_width},
       mc_height{c_height},
       mc_title{c_title},
-      m_view{sf::FloatRect(0.0f, 0.0f, c_viewWidth, c_viewHeight)},
+      mc_scene{c_scene},
+      m_view{sf::FloatRect(0.0f, 0.0f, c_textureWidth, c_textureHeight)},
+      m_texture{},
       m_isHovered{false},
       m_imageMin{0.0f, 0.0f},
       m_imageMax{0.0f, 0.0f} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_view.setCenter(c_textureWidth * 0.5f, c_textureHeight * 0.5f);
+  this->m_texture.create(c_textureWidth, c_textureHeight);
 }
 
 widget::~widget() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-const sf::View& widget::get_view() const noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  return this->m_view;
-}
-
-void widget::set_view(const sf::View& c_view) noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_view = c_view;
-}
-
-void widget::fill_image_stats() noexcept {
+void widget::fill_widget_fields() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_isHovered =

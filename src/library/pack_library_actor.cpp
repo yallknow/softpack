@@ -7,11 +7,10 @@
 namespace pack {
 namespace library {
 
-actor::actor(std::weak_ptr<sf::RenderTarget> renderWPtr,
-             std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
+actor::actor(std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
              const b2BodyId c_bodyId,
              std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept
-    : m_shape{renderWPtr, std::move(shapeUPtrRLink)},
+    : m_shape{std::move(shapeUPtrRLink)},
       m_body{c_bodyId},
       m_brainUPtr{std::move(brainUPtrRLink)} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -51,10 +50,10 @@ void actor::tick(const float c_dt) noexcept {
   this->m_shape.set_rotation(this->m_body.get_rotation());
 }
 
-void actor::draw() const noexcept {
+void actor::draw(sf::RenderTarget& targetLink) const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_shape.draw();
+  this->m_shape.draw(targetLink);
 }
 
 }  // namespace library

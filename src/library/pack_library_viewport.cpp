@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -16,33 +17,25 @@ namespace pack {
 namespace library {
 
 viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
-                   const std::string_view c_title, const float c_maxZoom,
+                   const std::string_view c_title, const scene& c_scene,
                    const std::uint32_t c_textureWidth,
-                   const std::uint32_t c_textureHeight) noexcept
-    : abstract::widget{c_width, c_height, c_title, c_textureWidth,
-                       c_textureHeight},
+                   const std::uint32_t c_textureHeight,
+                   const float c_maxZoom) noexcept
+    : abstract::widget{c_width, c_height,       c_title,
+                       c_scene, c_textureWidth, c_textureHeight},
       mc_maxZoom{c_maxZoom},
       m_dragging{false},
-      m_lastPosition{0, 0},
-      m_canvas{c_textureWidth, c_textureHeight} {
+      m_lastPosition{0, 0} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  this->m_view.setCenter(c_textureWidth * 0.5f, c_textureHeight * 0.5f);
 }
 
 viewport::~viewport() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-canvas& viewport::get_canvas() noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  return this->m_canvas;
-}
-
 void viewport::draw() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_canvas.get_texture().setView(this->m_view);
-  this->m_canvas.draw();
+  this->m_texture.setView(this->m_view);
+  this->mc_scene.draw(this->m_texture);
 
   const ImVec2 c_size{static_cast<float>(this->mc_width),
                       static_cast<float>(this->mc_height)};
@@ -53,11 +46,11 @@ void viewport::draw() noexcept {
     ImGui::BeginChild(
         this->mc_title.data(), c_size, false,
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-    ImGui::Image(this->m_canvas.get_texture().getTexture().getNativeHandle(),
+    ImGui::Image(this->m_texture.getTexture().getNativeHandle(),
                  ImGui::GetContentRegionAvail(), ImVec2{0.0f, 1.0f},
                  ImVec2{1.0f, 0.0f});
 
-    this->fill_image_stats();
+    this->fill_widget_fields();
 
     ImGui::EndChild();
   }
@@ -99,7 +92,7 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
         this->m_view.zoom(c_event.mouseWheelScroll.delta > 0 ? 0.9f : 1.1f);
 
         const sf::Vector2f c_textureSize{
-            static_cast<sf::Vector2f>(this->m_canvas.get_texture().getSize())};
+            static_cast<sf::Vector2f>(this->m_texture.getSize())};
 
         sf::Vector2f viewSize{this->m_view.getSize()};
         viewSize.x = std::min(viewSize.x, c_textureSize.x);
@@ -154,7 +147,7 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
 
         const sf::Vector2f c_viewHalf{this->m_view.getSize() * 0.5f};
         const sf::Vector2f c_textureSize{
-            static_cast<sf::Vector2f>(this->m_canvas.get_texture().getSize())};
+            static_cast<sf::Vector2f>(this->m_texture.getSize())};
 
         sf::Vector2f viewCenter{this->m_view.getCenter()};
         viewCenter.x = std::clamp(viewCenter.x, c_viewHalf.x,
