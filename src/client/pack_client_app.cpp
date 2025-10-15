@@ -168,6 +168,7 @@ void app::main_loop() noexcept {
     }
 
     this->m_viewport.draw();
+    this->m_minimap.set_view(this->m_viewport.get_view());
     this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);

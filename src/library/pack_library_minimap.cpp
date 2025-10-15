@@ -2,9 +2,15 @@
 
 #include <imgui.h>
 
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/View.hpp>
 
 #include "pack_library_preprocessor.hpp"
 
@@ -25,8 +31,19 @@ minimap::~minimap() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 void minimap::draw() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_texture.setView(this->m_view);
   this->mc_scene.draw(this->m_texture);
+
+  sf::RectangleShape cameraView;
+  cameraView.setFillColor(sf::Color::Transparent);
+  cameraView.setOutlineColor(sf::Color::Red);
+  cameraView.setOutlineThickness(this->m_texture.getSize().x / -100.0f);
+  cameraView.setSize(this->m_view.getSize());
+  cameraView.setPosition(this->m_view.getCenter() -
+                         this->m_view.getSize() * 0.5f);
+
+  this->m_texture.draw(cameraView);
+
+  this->m_texture.display();
 
   const ImVec2 c_size{static_cast<float>(this->mc_width),
                       static_cast<float>(this->mc_height)};

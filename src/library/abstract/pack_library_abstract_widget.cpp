@@ -31,6 +31,18 @@ widget::widget(const std::uint32_t c_width, const std::uint32_t c_height,
 
 widget::~widget() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
+const sf::View& widget::get_view() const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  return this->m_view;
+}
+
+void widget::set_view(const sf::View& c_view) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_view = c_view;
+}
+
 void widget::fill_widget_fields() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 

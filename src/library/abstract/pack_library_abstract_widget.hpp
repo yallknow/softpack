@@ -34,6 +34,10 @@ class widget /* final */ : private boost::noncopyable {
   virtual void draw() noexcept = 0;
   virtual void process_event(const sf::Event& c_event) noexcept = 0;
 
+ public:
+  const sf::View& get_view() const noexcept;
+  void set_view(const sf::View& c_view) noexcept;
+
  protected:
   void fill_widget_fields() noexcept;
 
