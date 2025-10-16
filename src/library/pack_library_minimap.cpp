@@ -11,6 +11,9 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Mouse.hpp>
+#include <algorithm>
 
 #include "pack_library_preprocessor.hpp"
 
@@ -64,12 +67,45 @@ void minimap::draw() noexcept {
   ImGui::End();
 }
 
-void minimap::process_event(const sf::Event& c_event) noexcept {
+bool minimap::process_event(const sf::Event& c_event) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!this->m_isHovered) {
-    return;
+    return false;
   }
+
+  switch (c_event.type) {
+    case sf::Event::MouseButtonPressed: {
+      if (c_event.mouseButton.button == sf::Mouse::Left) {
+        const ImVec2 c_mousePosition = ImGui::GetIO().MousePos;
+
+        const float c_relativeX{(c_mousePosition.x - this->m_imageMin.x) /
+                                (this->m_imageMax.x - this->m_imageMin.x)};
+        const float c_relativeY{(c_mousePosition.y - this->m_imageMin.y) /
+                                (this->m_imageMax.y - this->m_imageMin.y)};
+
+        const sf::Vector2f c_viewHalf{this->m_view.getSize() * 0.5f};
+        const sf::Vector2f c_textureSize{
+            static_cast<sf::Vector2f>(this->m_texture.getSize())};
+
+        sf::Vector2f worldPosition{c_relativeX * c_textureSize.x,
+                                   c_relativeY * c_textureSize.y};
+        worldPosition.x =
+            std::clamp(c_relativeX * c_textureSize.x, c_viewHalf.x,
+                       c_textureSize.x - c_viewHalf.x);
+        worldPosition.y =
+            std::clamp(c_relativeY * c_textureSize.y, c_viewHalf.y,
+                       c_textureSize.y - c_viewHalf.y);
+
+        this->m_view.setCenter(worldPosition);
+
+        return true;
+      }
+      break;
+    }
+  }
+
+  return false;
 }
 
 }  // namespace library

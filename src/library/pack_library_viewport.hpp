@@ -29,7 +29,7 @@ class viewport final : public abstract::widget {
 
  public:  // abstract::widget
   void draw() noexcept override;
-  void process_event(const sf::Event& c_event) noexcept override;
+  bool process_event(const sf::Event& c_event) noexcept override;
 
  private:
   const float mc_maxZoom;

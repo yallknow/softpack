@@ -57,12 +57,12 @@ void viewport::draw() noexcept {
   ImGui::End();
 }
 
-void viewport::process_event(const sf::Event& c_event) noexcept {
+bool viewport::process_event(const sf::Event& c_event) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!this->m_isHovered) {
     this->m_dragging = false;
-    return;
+    return false;
   }
 
   switch (c_event.type) {
@@ -120,6 +120,8 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
                                   c_textureSize.y - c_viewHalf.y);
 
         this->m_view.setCenter(viewCenter);
+
+        return true;
       }
       break;
     }
@@ -127,12 +129,16 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
       if (c_event.mouseButton.button == sf::Mouse::Left) {
         this->m_dragging = true;
         this->m_lastPosition = sf::Mouse::getPosition();
+
+        return true;
       }
       break;
     }
     case sf::Event::MouseButtonReleased: {
       if (c_event.mouseButton.button == sf::Mouse::Left) {
         this->m_dragging = false;
+
+        return true;
       }
       break;
     }
@@ -156,9 +162,13 @@ void viewport::process_event(const sf::Event& c_event) noexcept {
                                   c_textureSize.y - c_viewHalf.y);
 
         this->m_view.setCenter(viewCenter);
+
+        return true;
       }
     } break;
   }
+
+  return false;
 }
 
 }  // namespace library

@@ -27,7 +27,7 @@ class minimap final : public abstract::widget {
 
  public:  // abstract::widget
   void draw() noexcept override;
-  void process_event(const sf::Event& c_event) noexcept override;
+  bool process_event(const sf::Event& c_event) noexcept override;
 };
 
 }  // namespace library

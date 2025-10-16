@@ -168,7 +168,6 @@ void app::main_loop() noexcept {
     }
 
     this->m_viewport.draw();
-    this->m_minimap.set_view(this->m_viewport.get_view());
     this->m_minimap.draw();
 
     ImGui::SFML::Render(this->m_window);
@@ -185,15 +184,18 @@ void app::poll_events() noexcept {
   while (this->m_window.pollEvent(event)) {
     ImGui::SFML::ProcessEvent(this->m_window, event);
 
-    this->m_viewport.process_event(event);
-    this->m_minimap.process_event(event);
-
     switch (event.type) {
       case sf::Event::Closed: {
         PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received");
         this->m_window.close();
-        break;
+        return;
       }
+    }
+
+    if (this->m_viewport.process_event(event)) {
+      this->m_minimap.set_view(this->m_viewport.get_view());
+    } else if (this->m_minimap.process_event(event)) {
+      this->m_viewport.set_view(this->m_minimap.get_view());
     }
   }
 }

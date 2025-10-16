@@ -32,7 +32,7 @@ class widget /* final */ : private boost::noncopyable {
 
  public:
   virtual void draw() noexcept = 0;
-  virtual void process_event(const sf::Event& c_event) noexcept = 0;
+  virtual bool process_event(const sf::Event& c_event) noexcept = 0;
 
  public:
   const sf::View& get_view() const noexcept;
