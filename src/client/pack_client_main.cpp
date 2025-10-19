@@ -21,7 +21,7 @@ int main() {
   app app{};
 
   if (!app.start()) {
-    PACK_LIBRARY_LOG_ERROR("Can't start client");
+    PACK_LIBRARY_LOG_ERROR("Can not start client");
 
     return EXIT_FAILURE;
   }

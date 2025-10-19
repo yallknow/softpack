@@ -8,8 +8,10 @@
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <filesystem>
 #include <fstream>
@@ -34,7 +36,6 @@ constexpr std::string_view gsc_shapeProp{"shape"};
 
 constexpr std::string_view gsc_radiusProp{"radius"};
 constexpr std::string_view gsc_sizeProp{"size"};
-constexpr std::string_view gsc_originProp{"origin"};
 constexpr std::string_view gsc_positionProp{"position"};
 constexpr std::string_view gsc_xProp{"x"};
 constexpr std::string_view gsc_yProp{"y"};
@@ -60,7 +61,7 @@ constexpr std::string_view gsc_jitterStepProp{"jitterStep"};
 constexpr std::string_view gsc_circleShape{"circle"};
 constexpr std::string_view gsc_rectangleShape{"rectangle"};
 
-enum class brain { WANDER = 0 };
+enum class brain { NONE = 0, WANDER = 1 };
 
 bool contains_key(const Json::Value& c_value, const std::string_view key) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -99,6 +100,12 @@ bool contains_array(const Json::Value& c_value, const std::string_view key) {
   return contains_key(c_value, key) && c_value[key.data()].isArray();
 }
 
+bool contains_object(const Json::Value& c_value, const std::string_view key) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  return contains_key(c_value, key) && c_value[key.data()].isObject();
+}
+
 std::optional<std::string> get_string(const Json::Value& c_value,
                                       const std::string_view key) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -128,7 +135,7 @@ std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
                                          const std::string_view key) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (contains_key(c_value, key)) {
+  if (contains_object(c_value, key)) {
     const auto c_x{get_float(c_value[key.data()], gsc_xProp)};
     const auto c_y{get_float(c_value[key.data()], gsc_yProp)};
 
@@ -140,19 +147,17 @@ std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
   return std::nullopt;
 }
 
-void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
+bool load_shape(const Json::Value& c_shape, sf::Shape& shapeLink) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  if (const auto c_origin{get_vector2f(c_entity, gsc_originProp)}) {
-    shapeLink.setOrigin(c_origin.value());
-  }
-
-  if (const auto c_position{get_vector2f(c_entity, gsc_positionProp)}) {
+  if (const auto c_position{get_vector2f(c_shape, gsc_positionProp)}) {
     shapeLink.setPosition(c_position.value());
+  } else {
+    return false;
   }
 
-  if (contains_key(c_entity, gsc_colorProp)) {
-    const Json::Value& c_color{c_entity[gsc_colorProp.data()]};
+  if (contains_object(c_shape, gsc_colorProp)) {
+    const Json::Value& c_color{c_shape[gsc_colorProp.data()]};
 
     const auto c_red{get_int(c_color, gsc_redProp)};
     const auto c_green{get_int(c_color, gsc_greenProp)};
@@ -164,19 +169,18 @@ void load_common(const Json::Value& c_entity, sf::Shape& shapeLink) {
                                        static_cast<sf::Uint8>(c_blue.value())});
     }
   }
+
+  return true;
 }
 
-void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
+bool load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
                b2ShapeDef& shapeDefLink) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (const auto c_type{get_int(c_body, gsc_typeProp)}) {
     bodyDefLink.type = static_cast<b2BodyType>(c_type.value());
-  }
-
-  if (const auto c_position{get_vector2f(c_body, gsc_positionProp)}) {
-    bodyDefLink.position = b2Vec2{c_position.value().x / gsc_scale,
-                                  c_position.value().y / gsc_scale};
+  } else {
+    return false;
   }
 
   if (const auto c_linearDamping{get_float(c_body, gsc_linearDampingProp)}) {
@@ -198,31 +202,50 @@ void load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
   if (const auto c_restitution{get_float(c_body, gsc_restitutionProp)}) {
     shapeDefLink.material.restitution = c_restitution.value();
   }
+
+  return true;
 }
 
 std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (const auto c_type{get_int(c_brain, gsc_typeProp)}) {
-    if (static_cast<brain>(c_type.value()) == brain::WANDER) {
+    if (static_cast<brain>(c_type.value()) == brain::NONE) {
+      return nullptr;
+    } else if (static_cast<brain>(c_type.value()) == brain::WANDER) {
       sf::Vector2f velocity{0.0f, 0.0f};
       sf::Vector2f maxVelocity{0.0f, 0.0f};
       float jitterStep{0.0f};
 
+      bool valid{true};
+
       if (const auto c_velocity{get_vector2f(c_brain, gsc_velocityProp)}) {
         velocity = c_velocity.value();
+      } else {
+        valid = false;
       }
 
       if (const auto c_maxVelocity{
               get_vector2f(c_brain, gsc_maxVelocityProp)}) {
         maxVelocity = c_maxVelocity.value();
+      } else {
+        valid = false;
       }
 
       if (const auto c_jitterStep{get_float(c_brain, gsc_jitterStepProp)}) {
         jitterStep = c_jitterStep.value();
+      } else {
+        valid = false;
       }
 
-      return std::make_unique<wander_brain>(velocity, maxVelocity, jitterStep);
+      if (valid) {
+        return std::make_unique<wander_brain>(velocity, maxVelocity,
+                                              jitterStep);
+      } else {
+        return nullptr;
+      }
+    } else {
+      PACK_LIBRARY_LOG_WARNING("Unknown brain type: " + c_type.value());
     }
   }
 
@@ -239,48 +262,68 @@ void load_entities(const Json::Value& c_root,
   }
 
   for (const Json::Value& c_entity : c_root[gsc_entitiesProp.data()]) {
-    if (const auto c_shape{get_string(c_entity, gsc_shapeProp)}) {
-      std::unique_ptr<sf::Shape> shapeUPtr{nullptr};
+    if (!contains_object(c_entity, gsc_shapeProp) ||
+        !contains_object(c_entity, gsc_bodyProp) ||
+        !contains_object(c_entity, gsc_brainProp)) {
+      continue;
+    }
 
-      if (c_shape.value() == gsc_circleShape) {
+    std::unique_ptr<sf::Shape> shapeUPtr{nullptr};
+    const Json::Value& c_shape{c_entity[gsc_shapeProp.data()]};
+
+    if (const auto c_shapeType{get_string(c_shape, gsc_typeProp)}) {
+      if (c_shapeType.value() == gsc_circleShape) {
         auto circleUPtr{std::make_unique<sf::CircleShape>()};
 
-        if (const auto c_radius{get_float(c_entity, gsc_radiusProp)}) {
+        if (const auto c_radius{get_float(c_shape, gsc_radiusProp)}) {
           circleUPtr->setRadius(c_radius.value());
+          circleUPtr->setOrigin(
+              sf::Vector2f{c_radius.value(), c_radius.value()});
+        } else {
+          continue;
         }
 
         shapeUPtr = std::move(circleUPtr);
-      } else if (c_shape.value() == gsc_rectangleShape) {
+      } else if (c_shapeType.value() == gsc_rectangleShape) {
         auto rectangleUPtr{std::make_unique<sf::RectangleShape>()};
 
-        if (const auto c_size{get_vector2f(c_entity, gsc_sizeProp)}) {
+        if (const auto c_size{get_vector2f(c_shape, gsc_sizeProp)}) {
           rectangleUPtr->setSize(c_size.value());
+          rectangleUPtr->setOrigin(c_size.value() * 0.5f);
+        } else {
+          continue;
         }
 
         shapeUPtr = std::move(rectangleUPtr);
       } else {
-        PACK_LIBRARY_LOG_WARNING("Unknown shape property: " + c_shape.value());
+        PACK_LIBRARY_LOG_WARNING("Unknown shape type: " + c_shapeType.value());
         continue;
       }
 
-      load_common(c_entity, *shapeUPtr);
-
-      b2BodyDef bodyDef{b2DefaultBodyDef()};
-      b2ShapeDef shapeDef{b2DefaultShapeDef()};
-
-      if (contains_key(c_entity, gsc_bodyProp)) {
-        load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef);
+      if (!load_shape(c_shape, *shapeUPtr)) {
+        PACK_LIBRARY_LOG_WARNING("Shape does not have all required fields");
+        continue;
       }
-
-      std::unique_ptr<abstract::brain> brainUPtr{nullptr};
-
-      if (contains_key(c_entity, gsc_brainProp)) {
-        brainUPtr = load_brain(c_entity[gsc_brainProp.data()]);
-      }
-
-      entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
-                                std::move(brainUPtr));
+    } else {
+      continue;
     }
+
+    b2BodyDef bodyDef{b2DefaultBodyDef()};
+    b2ShapeDef shapeDef{b2DefaultShapeDef()};
+
+    if (!load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef)) {
+      PACK_LIBRARY_LOG_WARNING("Body does not have all required fields");
+      continue;
+    }
+
+    bodyDef.position = b2Vec2{shapeUPtr->getPosition().x / gsc_scale,
+                              shapeUPtr->getPosition().y / gsc_scale};
+
+    std::unique_ptr<abstract::brain> brainUPtr{
+        load_brain(c_entity[gsc_brainProp.data()])};
+
+    entitiesLink.emplace_back(std::move(shapeUPtr), bodyDef, shapeDef,
+                              std::move(brainUPtr));
   }
 }
 
