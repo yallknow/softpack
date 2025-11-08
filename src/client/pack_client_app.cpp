@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "../library/pack_library_actor.hpp"
 #include "../library/pack_library_math.hpp"
 #include "../library/pack_library_preprocessor.hpp"
 #include "../library/pack_library_scene_entity.hpp"
@@ -127,11 +128,14 @@ void app::load_scene() noexcept {
       b2CreatePolygonShape(c_bodyId, &entity.m_shapeDef, &c_polygon);
     } else {
       PACK_LIBRARY_LOG_WARNING("Unknown shape");
+
       continue;
     }
 
-    this->m_scene.add(std::move(entity.m_shapeUPtr), c_bodyId,
-                      std::move(entity.m_brainUPtr));
+    library::actor actor{std::move(entity.m_shapeUPtr), c_bodyId,
+                         std::move(entity.m_brainUPtr)};
+
+    this->m_scene.add(std::move(actor));
   }
 }
 
@@ -146,6 +150,7 @@ void app::main_loop() noexcept {
 
     if (!this->m_window.isOpen()) {
       PACK_LIBRARY_LOG_INFO("The window was closed by an event");
+
       break;
     }
 
@@ -187,6 +192,7 @@ void app::poll_events() noexcept {
     switch (event.type) {
       case sf::Event::Closed: {
         PACK_LIBRARY_LOG_INFO("Event sf::Event::Closed received");
+
         this->m_window.close();
         return;
       }

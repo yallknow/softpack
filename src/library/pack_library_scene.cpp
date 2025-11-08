@@ -12,13 +12,25 @@ scene::scene() noexcept : m_actors{} { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
 scene::~scene() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 
-void scene::add(std::unique_ptr<sf::Shape>&& shapeUPtrRLink,
-                const b2BodyId c_bodyId,
-                std::unique_ptr<abstract::brain>&& brainUPtrRLink) noexcept {
+scene::scene(scene&& otherRLink) noexcept
+    : m_actors{std::move(otherRLink.m_actors)} {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+}
+
+scene& scene::operator=(scene&& otherRLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  this->m_actors.emplace_back(std::move(shapeUPtrRLink), c_bodyId,
-                              std::move(brainUPtrRLink));
+  if (this != &otherRLink) {
+    this->m_actors = std::move(otherRLink.m_actors);
+  }
+
+  return *this;
+}
+
+void scene::add(actor&& actorRLink) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_actors.emplace_back(std::move(actorRLink));
 }
 
 void scene::tick(const float c_dt) noexcept {

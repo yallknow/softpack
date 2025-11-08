@@ -21,8 +21,8 @@ viewport::viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                    const std::uint32_t c_textureWidth,
                    const std::uint32_t c_textureHeight,
                    const float c_maxZoom) noexcept
-    : abstract::widget{c_width, c_height,       c_title,
-                       c_scene, c_textureWidth, c_textureHeight},
+    : abstract::texture_widget{c_width, c_height,       c_title,
+                               c_scene, c_textureWidth, c_textureHeight},
       mc_maxZoom{c_maxZoom},
       m_dragging{false},
       m_lastPosition{0, 0} {
@@ -50,7 +50,7 @@ void viewport::draw() noexcept {
                  ImGui::GetContentRegionAvail(), ImVec2{0.0f, 1.0f},
                  ImVec2{1.0f, 0.0f});
 
-    this->fill_widget_fields();
+    this->fill_image_fields();
 
     ImGui::EndChild();
   }

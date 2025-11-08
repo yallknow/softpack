@@ -31,6 +31,14 @@ body& body::operator=(body&& otherRLink) noexcept {
   return *this;
 }
 
+sf::Vector2f body::get_position() const noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
+
+  return sf::Vector2f{c_transform.p.x * gsc_scale, c_transform.p.y * gsc_scale};
+}
+
 float body::get_rotation() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
@@ -45,13 +53,6 @@ void body::set_veloticy(const sf::Vector2f& c_velocity) noexcept {
 
   const b2Vec2 c_power{c_velocity.x, c_velocity.y};
   b2Body_ApplyForceToCenter(this->m_id, c_power, true);
-}
-
-sf::Vector2f body::get_position() const noexcept {
-  PACK_LIBRARY_LOG_FUNCTION_CALL();
-
-  const b2Transform c_transform{b2Body_GetTransform(this->m_id)};
-  return sf::Vector2f{c_transform.p.x * gsc_scale, c_transform.p.y * gsc_scale};
 }
 
 }  // namespace library

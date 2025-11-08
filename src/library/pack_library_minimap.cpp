@@ -24,8 +24,8 @@ minimap::minimap(const std::uint32_t c_width, const std::uint32_t c_height,
                  const std::string_view c_title, const scene& c_scene,
                  const std::uint32_t c_textureWidth,
                  const std::uint32_t c_textureHeight) noexcept
-    : abstract::widget{c_width, c_height,       c_title,
-                       c_scene, c_textureWidth, c_textureHeight} {
+    : abstract::texture_widget{c_width, c_height,       c_title,
+                               c_scene, c_textureWidth, c_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 }
 
@@ -60,7 +60,7 @@ void minimap::draw() noexcept {
     ImGui::Image(this->m_texture.getTexture().getNativeHandle(), c_size,
                  ImVec2{0.0f, 1.0f}, ImVec2{1.0f, 0.0f});
 
-    this->fill_widget_fields();
+    this->fill_image_fields();
 
     ImGui::EndChild();
   }

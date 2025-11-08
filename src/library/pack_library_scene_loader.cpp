@@ -258,6 +258,7 @@ void load_entities(const Json::Value& c_root,
 
   if (!contains_array(c_root, gsc_entitiesProp)) {
     PACK_LIBRARY_LOG_ERROR("Entity array not found");
+
     return;
   }
 
@@ -297,11 +298,13 @@ void load_entities(const Json::Value& c_root,
         shapeUPtr = std::move(rectangleUPtr);
       } else {
         PACK_LIBRARY_LOG_WARNING("Unknown shape type: " + c_shapeType.value());
+
         continue;
       }
 
       if (!load_shape(c_shape, *shapeUPtr)) {
         PACK_LIBRARY_LOG_WARNING("Shape does not have all required fields");
+
         continue;
       }
     } else {
@@ -313,6 +316,7 @@ void load_entities(const Json::Value& c_root,
 
     if (!load_body(c_entity[gsc_bodyProp.data()], bodyDef, shapeDef)) {
       PACK_LIBRARY_LOG_WARNING("Body does not have all required fields");
+
       continue;
     }
 
@@ -337,6 +341,7 @@ bool scene_loader::load(
   if (!std::filesystem::exists(c_path)) {
     PACK_LIBRARY_LOG_ERROR("The JSON file: " + std::string{c_path} +
                            " does not exist");
+
     return false;
   }
 
@@ -344,6 +349,7 @@ bool scene_loader::load(
 
   if (!file.is_open()) {
     PACK_LIBRARY_LOG_ERROR("Failed to open JSON file: " + std::string{c_path});
+
     return false;
   }
 
@@ -353,6 +359,7 @@ bool scene_loader::load(
 
   if (!Json::parseFromStream(builder, file, &root, &error)) {
     PACK_LIBRARY_LOG_ERROR("Failed to parse JSON file: " + error);
+
     return false;
   }
 

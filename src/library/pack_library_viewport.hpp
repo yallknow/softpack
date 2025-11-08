@@ -8,13 +8,13 @@
 #include <cstdint>
 #include <string_view>
 
-#include "abstract/pack_library_abstract_widget.hpp"
+#include "abstract/pack_library_abstract_texture_widget.hpp"
 #include "pack_library_scene.hpp"
 
 namespace pack {
 namespace library {
 
-class viewport final : public abstract::widget {
+class viewport final : public abstract::texture_widget {
  public:
   explicit viewport(const std::uint32_t c_width, const std::uint32_t c_height,
                     const std::string_view c_title, const scene& c_scene,
