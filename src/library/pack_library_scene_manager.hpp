@@ -20,7 +20,9 @@ class scene_manager final : public abstract::widget {
     IDLE = 0,
     SELECTED = 1,
     READY = 2,
-    RUNNING = 3
+    RUNNING = 3,
+    PAUSED = 4,
+    DROPPED = 5
   };
 
  public:
@@ -45,7 +47,7 @@ class scene_manager final : public abstract::widget {
   std::string get_selected_scene() const noexcept;
 
  private:
-  bool load_scenes() noexcept;
+  bool refresh() noexcept;
 
  private:
   const std::string mc_path;

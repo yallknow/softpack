@@ -33,6 +33,12 @@ void scene::add(actor&& actorRLink) noexcept {
   this->m_actors.emplace_back(std::move(actorRLink));
 }
 
+void scene::clear() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  this->m_actors.clear();
+}
+
 void scene::tick(const float c_dt) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 

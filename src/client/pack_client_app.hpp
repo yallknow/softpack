@@ -30,6 +30,9 @@ class app final : private boost::noncopyable {
   bool start() noexcept;
 
  private:
+  void create_world() noexcept;
+  void destroy_world() noexcept;
+
   void load_scene(const std::string_view c_path) noexcept;
   void main_loop() noexcept;
   void poll_events() noexcept;

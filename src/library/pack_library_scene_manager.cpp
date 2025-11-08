@@ -8,8 +8,11 @@
 
 namespace {
 
-constexpr std::string_view gsc_btnLoadSceneList{"refresh"};
-constexpr std::string_view gsc_btnLoadSelectedScene{"load"};
+constexpr std::string_view gsc_btnRefresh{"refresh"};
+constexpr std::string_view gsc_btnLoad{"load"};
+constexpr std::string_view gsc_btnPause{"pause"};
+constexpr std::string_view gsc_btnResume{"resume"};
+constexpr std::string_view gsc_btnDrop{"drop"};
 
 }  // namespace
 
@@ -39,7 +42,7 @@ void scene_manager::draw() noexcept {
     const ImVec2 c_size{static_cast<float>(this->mc_width),
                         static_cast<float>(this->mc_height)};
 
-    // BeginDisabled gsc_btnLoadSceneList && Selectable
+    // BeginDisabled gsc_btnRefresh && Selectable
     state currentState = this->m_state;
 
     if (currentState != state::IDLE && currentState != state::SELECTED) {
@@ -51,6 +54,8 @@ void scene_manager::draw() noexcept {
 
     for (const auto& c_scene : this->m_scenes) {
       if (ImGui::Selectable(c_scene.data(), c_scene == this->m_selectedScene)) {
+        PACK_LIBRARY_LOG_INFO("Scene loader state changed to SELECTED");
+
         this->m_state = state::SELECTED;
         this->m_selectedScene = c_scene;
       }
@@ -58,31 +63,87 @@ void scene_manager::draw() noexcept {
 
     ImGui::EndChild();
 
-    if (ImGui::Button(gsc_btnLoadSceneList.data())) {
+    if (ImGui::Button(gsc_btnRefresh.data())) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
+
       this->m_state = state::IDLE;
-      this->load_scenes();
+      this->refresh();
     }
 
     if (currentState != state::IDLE && currentState != state::SELECTED) {
       ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnLoadSceneList && Selectable
+    }  // EndDisabled gsc_btnRefresh && Selectable
 
     ImGui::SameLine();
 
-    // BeginDisabled gsc_btnLoadSelectedScene
+    // BeginDisabled gsc_btnLoad
     currentState = this->m_state;
 
     if (currentState != state::SELECTED) {
       ImGui::BeginDisabled();
     }
 
-    if (ImGui::Button(gsc_btnLoadSelectedScene.data())) {
+    if (ImGui::Button(gsc_btnLoad.data())) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to READY");
+
       this->m_state = state::READY;
     }
 
     if (currentState != state::SELECTED) {
       ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnLoadSelectedScene
+    }  // EndDisabled gsc_btnLoad
+
+    ImGui::SameLine();
+
+    // BeginDisabled gsc_btnPause
+    if (currentState != state::RUNNING) {
+      ImGui::BeginDisabled();
+    }
+
+    if (ImGui::Button(gsc_btnPause.data())) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to PAUSED");
+
+      this->m_state = state::PAUSED;
+    }
+
+    if (currentState != state::RUNNING) {
+      ImGui::EndDisabled();
+    }  // EndDisabled gsc_btnPause
+
+    ImGui::SameLine();
+
+    // BeginDisabled gsc_btnResume
+    if (currentState != state::PAUSED) {
+      ImGui::BeginDisabled();
+    }
+
+    if (ImGui::Button(gsc_btnResume.data())) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
+
+      this->m_state = state::RUNNING;
+    }
+
+    if (currentState != state::PAUSED) {
+      ImGui::EndDisabled();
+    }  // EndDisabled gsc_btnResume
+
+    ImGui::SameLine();
+
+    // BeginDisabled gsc_btnDrop
+    if (currentState != state::PAUSED) {
+      ImGui::BeginDisabled();
+    }
+
+    if (ImGui::Button(gsc_btnDrop.data())) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to DROPPED");
+
+      this->m_state = state::DROPPED;
+      this->refresh();
+    }
+
+    if (currentState != state::PAUSED) {
+      ImGui::EndDisabled();
+    }  // EndDisabled gsc_btnDrop
   }
   ImGui::End();
 }
@@ -111,7 +172,7 @@ std::string scene_manager::get_selected_scene() const noexcept {
   return this->mc_path + this->m_selectedScene;
 }
 
-bool scene_manager::load_scenes() noexcept {
+bool scene_manager::refresh() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_selectedScene.clear();

@@ -75,18 +75,13 @@ app::app() noexcept
                 m_scene,          gsc_textureWidth,  gsc_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  b2WorldDef worldDef{b2DefaultWorldDef()};
-  worldDef.gravity = gsc_gravity;
-
-  this->m_worldId = b2CreateWorld(&worldDef);
-
   this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
 }
 
 app::~app() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-  b2DestroyWorld(this->m_worldId);
+  this->destroy_world();
 }
 
 bool app::start() noexcept {
@@ -104,6 +99,23 @@ bool app::start() noexcept {
   PACK_LIBRARY_LOG_INFO("ImGui::SFML shut down");
 
   return true;
+}
+
+void app::create_world() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  b2WorldDef worldDef{b2DefaultWorldDef()};
+  worldDef.gravity = gsc_gravity;
+
+  this->m_worldId = b2CreateWorld(&worldDef);
+}
+
+void app::destroy_world() noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  if (b2World_IsValid(this->m_worldId)) {
+    b2DestroyWorld(this->m_worldId);
+  }
 }
 
 void app::load_scene(const std::string_view c_path) noexcept {
@@ -162,8 +174,20 @@ void app::main_loop() noexcept {
 
     if (this->m_sceneManager.get_state() ==
         library::scene_manager::state::READY) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
+
       this->m_sceneManager.set_state(library::scene_manager::state::RUNNING);
+
+      this->create_world();
       this->load_scene(this->m_sceneManager.get_selected_scene());
+    } else if (this->m_sceneManager.get_state() ==
+               library::scene_manager::state::DROPPED) {
+      PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
+
+      this->m_sceneManager.set_state(library::scene_manager::state::IDLE);
+
+      this->m_scene.clear();
+      this->destroy_world();
     }
 
     const sf::Time c_dt{deltaClock.restart()};
@@ -177,10 +201,17 @@ void app::main_loop() noexcept {
     ImGui::DockSpaceOverViewport();
     ImGui::ShowDemoWindow();
 
-    this->m_scene.tick(c_dt_seconds);
+    if (this->m_sceneManager.get_state() ==
+        library::scene_manager::state::RUNNING) {
+      this->m_scene.tick(c_dt_seconds);
+    }
 
     while (timeAccumulator >= gsc_defaultTimestep) {
-      b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);
+      if (this->m_sceneManager.get_state() ==
+          library::scene_manager::state::RUNNING) {
+        b2World_Step(this->m_worldId, gsc_defaultTimestep, gsc_iterationsCount);
+      }
+
       timeAccumulator -= gsc_defaultTimestep;
     }
 

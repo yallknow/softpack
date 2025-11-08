@@ -23,6 +23,7 @@ class scene final : private boost::noncopyable {
 
  public:
   void add(actor&& actorRLink) noexcept;
+  void clear() noexcept;
 
   void tick(const float c_dt) noexcept;
   void draw(sf::RenderTarget& targetLink) const noexcept;
