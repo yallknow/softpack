@@ -30,14 +30,14 @@ def random_brain():
     return {
         "type": 1,
         "velocity": {
-            "x": random.uniform(-150.0, 150.0),
-            "y": random.uniform(-150.0, 150.0)
+            "x": random.uniform(-1500.0, 1500.0),
+            "y": random.uniform(-15000.0, 15000.0)
         },
         "maxVelocity": {
-            "x": random.uniform(1000.0, 1500.0),
-            "y": random.uniform(1000.0, 1500.0)
+            "x": random.uniform(100000.0, 150000.0),
+            "y": random.uniform(100000.0, 150000.0)
         },
-        "jitterStep": random.uniform(50000.0, 100000.0)
+        "jitterStep": random.uniform(1000.0, 10000.0)
     }
 
 
@@ -45,10 +45,10 @@ def make_circle():
     return {
         "shape": {
             "type": "circle",
-            "radius": random.uniform(10.0, 100.0),
+            "radius": random.uniform(50.0, 300.0),
             "position": {
-                "x": random.uniform(200.0, WORLD_WIDTH - 200.0),
-                "y": random.uniform(200.0, WORLD_HEIGHT - 200.0)
+                "x": random.uniform(100.0, WORLD_WIDTH - 600.0),
+                "y": random.uniform(100.0, WORLD_HEIGHT - 600.0)
             },
             "color": random_color()
         },
@@ -62,12 +62,12 @@ def make_rectangle():
         "shape": {
             "type": "rectangle",
             "size": {
-                "x": random.uniform(10.0, 100.0),
-                "y": random.uniform(10.0, 100.0)
+                "x": random.uniform(50.0, 300.0),
+                "y": random.uniform(50.0, 300.0)
             },
             "position": {
-                "x": random.uniform(100.0, WORLD_WIDTH - 100.0),
-                "y": random.uniform(100.0, WORLD_HEIGHT - 100.0)
+                "x": random.uniform(50.0, WORLD_WIDTH - 300.0),
+                "y": random.uniform(50.0, WORLD_HEIGHT - 300.0)
             },
             "color": random_color()
         },

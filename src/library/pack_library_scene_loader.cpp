@@ -13,6 +13,7 @@
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -61,7 +62,7 @@ constexpr std::string_view gsc_jitterStepProp{"jitterStep"};
 constexpr std::string_view gsc_circleShape{"circle"};
 constexpr std::string_view gsc_rectangleShape{"rectangle"};
 
-enum class brain { NONE = 0, WANDER = 1 };
+enum class brain : std::uint32_t { NONE = 0, WANDER = 1 };
 
 bool contains_key(const Json::Value& c_value, const std::string_view key) {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
@@ -339,7 +340,7 @@ bool scene_loader::load(
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!std::filesystem::exists(c_path)) {
-    PACK_LIBRARY_LOG_ERROR("The JSON file: " + std::string{c_path} +
+    PACK_LIBRARY_LOG_ERROR("The scene file: " + std::string{c_path} +
                            " does not exist");
 
     return false;
@@ -348,7 +349,7 @@ bool scene_loader::load(
   std::ifstream file{c_path.data(), std::ifstream::binary};
 
   if (!file.is_open()) {
-    PACK_LIBRARY_LOG_ERROR("Failed to open JSON file: " + std::string{c_path});
+    PACK_LIBRARY_LOG_ERROR("Failed to open scene file: " + std::string{c_path});
 
     return false;
   }
@@ -358,7 +359,7 @@ bool scene_loader::load(
   std::string error{};
 
   if (!Json::parseFromStream(builder, file, &root, &error)) {
-    PACK_LIBRARY_LOG_ERROR("Failed to parse JSON file: " + error);
+    PACK_LIBRARY_LOG_ERROR("Failed to parse scene file: " + error);
 
     return false;
   }
@@ -367,7 +368,7 @@ bool scene_loader::load(
 
   PACK_LIBRARY_LOG_INFO("Successfully loaded " +
                         std::to_string(entitiesLink.size()) +
-                        " entities from JSON file");
+                        " entities from scene file");
 
   return true;
 }

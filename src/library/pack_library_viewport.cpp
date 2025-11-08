@@ -37,15 +37,16 @@ void viewport::draw() noexcept {
   this->m_texture.setView(this->m_view);
   this->mc_scene.draw(this->m_texture);
 
-  const ImVec2 c_size{static_cast<float>(this->mc_width),
-                      static_cast<float>(this->mc_height)};
-
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,
           ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+    const ImVec2 c_size{static_cast<float>(this->mc_width),
+                        static_cast<float>(this->mc_height)};
+
     ImGui::BeginChild(
         this->mc_title.data(), c_size, false,
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
     ImGui::Image(this->m_texture.getTexture().getNativeHandle(),
                  ImGui::GetContentRegionAvail(), ImVec2{0.0f, 1.0f},
                  ImVec2{1.0f, 0.0f});

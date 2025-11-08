@@ -7,9 +7,11 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <boost/core/noncopyable.hpp>
+#include <string_view>
 
 #include "../library/pack_library_minimap.hpp"
 #include "../library/pack_library_scene.hpp"
+#include "../library/pack_library_scene_manager.hpp"
 #include "../library/pack_library_viewport.hpp"
 
 namespace pack {
@@ -28,7 +30,7 @@ class app final : private boost::noncopyable {
   bool start() noexcept;
 
  private:
-  void load_scene() noexcept;
+  void load_scene(const std::string_view c_path) noexcept;
   void main_loop() noexcept;
   void poll_events() noexcept;
 
@@ -37,6 +39,8 @@ class app final : private boost::noncopyable {
   sf::RenderWindow m_window;
 
   library::scene m_scene;
+  library::scene_manager m_sceneManager;
+
   library::viewport m_viewport;
   library::minimap m_minimap;
 };

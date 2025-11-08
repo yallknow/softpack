@@ -16,7 +16,6 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <cstdint>
-#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -47,14 +46,18 @@ constexpr std::uint32_t gsc_minimapWidth{gsc_viewportWidth / gsc_worldScale};
 constexpr std::uint32_t gsc_minimapHeight{gsc_viewportHeight / gsc_worldScale};
 constexpr std::uint32_t gsc_textureWidth{gsc_viewportWidth * gsc_worldScale};
 constexpr std::uint32_t gsc_textureHeight{gsc_viewportHeight * gsc_worldScale};
+constexpr std::uint32_t gsc_sceneManagerWidth{gsc_minimapWidth};
+constexpr std::uint32_t gsc_sceneManagerHeight{gsc_minimapHeight -
+                                               gsc_borderSize};
 constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_minimapWidth +
                                         gsc_borderSize};
 constexpr std::uint32_t gsc_windowHeight{gsc_viewportHeight + gsc_borderSize};
 
 constexpr std::string_view gsc_viewportTitle{"viewport"};
 constexpr std::string_view gsc_minimapTitle{"minimap"};
+constexpr std::string_view gsc_sceneManagerTitle{"scene manager"};
 constexpr std::string_view gsc_windowTitle{"softpack"};
-constexpr std::string_view gsc_scenePath{"scene/demo.json"};
+constexpr std::string_view gsc_sceneDirectory{"scene/"};
 
 }  // namespace
 
@@ -63,6 +66,8 @@ app::app() noexcept
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
       m_scene{},
+      m_sceneManager{gsc_sceneManagerWidth, gsc_sceneManagerHeight,
+                     gsc_sceneManagerTitle, gsc_sceneDirectory},
       m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_viewportTitle,
                  m_scene,           gsc_textureWidth,   gsc_textureHeight,
                  gsc_maxZoom},
@@ -93,8 +98,6 @@ bool app::start() noexcept {
   ImGuiIO& ioLink{ImGui::GetIO()};
   ioLink.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  this->load_scene();
-
   this->main_loop();
 
   ImGui::SFML::Shutdown();
@@ -103,11 +106,14 @@ bool app::start() noexcept {
   return true;
 }
 
-void app::load_scene() noexcept {
+void app::load_scene(const std::string_view c_path) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   std::vector<library::scene_entity> entities{};
-  library::scene_loader::load(gsc_scenePath, entities);
+
+  if (!library::scene_loader::load(c_path, entities)) {
+    return;
+  }
 
   for (auto& entity : entities) {
     const b2BodyId c_bodyId{b2CreateBody(this->m_worldId, &entity.m_bodyDef)};
@@ -154,6 +160,12 @@ void app::main_loop() noexcept {
       break;
     }
 
+    if (this->m_sceneManager.get_state() ==
+        library::scene_manager::state::READY) {
+      this->m_sceneManager.set_state(library::scene_manager::state::RUNNING);
+      this->load_scene(this->m_sceneManager.get_selected_scene());
+    }
+
     const sf::Time c_dt{deltaClock.restart()};
     const float c_dt_seconds{c_dt.asSeconds()};
     timeAccumulator += c_dt_seconds;
@@ -172,6 +184,7 @@ void app::main_loop() noexcept {
       timeAccumulator -= gsc_defaultTimestep;
     }
 
+    this->m_sceneManager.draw();
     this->m_viewport.draw();
     this->m_minimap.draw();
 

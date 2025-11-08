@@ -73,7 +73,7 @@ void log_builder::async(const std::string_view c_tag,
       std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id()))};
 
   std::string record{", { \"time\": \"" + time::now() + "\", \"pid\": \"" +
-                     c_pid.c_str() + "\", \"tag\": \"" + c_tag.data() +
+                     c_pid.data() + "\", \"tag\": \"" + c_tag.data() +
                      "\", \"value\": \"" + c_message.data()};
 
   if (c_errorCode) {
