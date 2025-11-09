@@ -14,6 +14,23 @@ constexpr std::string_view gsc_btnPause{"pause"};
 constexpr std::string_view gsc_btnResume{"resume"};
 constexpr std::string_view gsc_btnDrop{"drop"};
 
+void draw_button(const std::string_view c_title, const bool c_disable,
+                 const std::function<void()> c_onClick) noexcept {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  if (c_disable) {
+    ImGui::BeginDisabled();
+  }
+
+  if (ImGui::Button(c_title.data())) {
+    c_onClick();
+  }
+
+  if (c_disable) {
+    ImGui::EndDisabled();
+  }
+}
+
 }  // namespace
 
 namespace pack {
@@ -42,10 +59,11 @@ void scene_manager::draw() noexcept {
     const ImVec2 c_size{static_cast<float>(this->mc_width),
                         static_cast<float>(this->mc_height)};
 
-    // BeginDisabled gsc_btnRefresh && Selectable
-    state currentState = this->m_state;
+    // BeginDisabled Selectable
+    const bool c_isSelectableDisabled{this->m_state != state::IDLE &&
+                                      this->m_state != state::SELECTED};
 
-    if (currentState != state::IDLE && currentState != state::SELECTED) {
+    if (c_isSelectableDisabled) {
       ImGui::BeginDisabled();
     }
 
@@ -63,87 +81,55 @@ void scene_manager::draw() noexcept {
 
     ImGui::EndChild();
 
-    if (ImGui::Button(gsc_btnRefresh.data())) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
-
-      this->m_state = state::IDLE;
-      this->refresh();
-    }
-
-    if (currentState != state::IDLE && currentState != state::SELECTED) {
+    if (c_isSelectableDisabled) {
       ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnRefresh && Selectable
+    }  // EndDisabled Selectable
+
+    draw_button(
+        gsc_btnRefresh,
+        this->m_state != state::IDLE && this->m_state != state::SELECTED,
+        [this]() -> void {
+          PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
+
+          this->m_state = state::IDLE;
+          this->refresh();
+        });
 
     ImGui::SameLine();
 
-    // BeginDisabled gsc_btnLoad
-    currentState = this->m_state;
+    draw_button(gsc_btnLoad, this->m_state != state::SELECTED,
+                [this]() -> void {
+                  PACK_LIBRARY_LOG_INFO("Scene loader state changed to READY");
 
-    if (currentState != state::SELECTED) {
-      ImGui::BeginDisabled();
-    }
-
-    if (ImGui::Button(gsc_btnLoad.data())) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to READY");
-
-      this->m_state = state::READY;
-    }
-
-    if (currentState != state::SELECTED) {
-      ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnLoad
+                  this->m_state = state::READY;
+                });
 
     ImGui::SameLine();
 
-    // BeginDisabled gsc_btnPause
-    if (currentState != state::RUNNING) {
-      ImGui::BeginDisabled();
-    }
+    draw_button(gsc_btnPause, this->m_state != state::RUNNING,
+                [this]() -> void {
+                  PACK_LIBRARY_LOG_INFO("Scene loader state changed to PAUSED");
 
-    if (ImGui::Button(gsc_btnPause.data())) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to PAUSED");
-
-      this->m_state = state::PAUSED;
-    }
-
-    if (currentState != state::RUNNING) {
-      ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnPause
+                  this->m_state = state::PAUSED;
+                });
 
     ImGui::SameLine();
 
-    // BeginDisabled gsc_btnResume
-    if (currentState != state::PAUSED) {
-      ImGui::BeginDisabled();
-    }
+    draw_button(
+        gsc_btnResume, this->m_state != state::PAUSED, [this]() -> void {
+          PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
 
-    if (ImGui::Button(gsc_btnResume.data())) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
-
-      this->m_state = state::RUNNING;
-    }
-
-    if (currentState != state::PAUSED) {
-      ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnResume
+          this->m_state = state::RUNNING;
+        });
 
     ImGui::SameLine();
 
-    // BeginDisabled gsc_btnDrop
-    if (currentState != state::PAUSED) {
-      ImGui::BeginDisabled();
-    }
-
-    if (ImGui::Button(gsc_btnDrop.data())) {
+    draw_button(gsc_btnDrop, this->m_state != state::PAUSED, [this]() -> void {
       PACK_LIBRARY_LOG_INFO("Scene loader state changed to DROPPED");
 
       this->m_state = state::DROPPED;
       this->refresh();
-    }
-
-    if (currentState != state::PAUSED) {
-      ImGui::EndDisabled();
-    }  // EndDisabled gsc_btnDrop
+    });
   }
   ImGui::End();
 }

@@ -64,7 +64,8 @@ constexpr std::string_view gsc_rectangleShape{"rectangle"};
 
 enum class brain : std::uint32_t { NONE = 0, WANDER = 1 };
 
-bool contains_key(const Json::Value& c_value, const std::string_view key) {
+bool contains_key(const Json::Value& c_value,
+                  const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   const bool c_result{c_value.isMember(key.data())};
@@ -77,38 +78,43 @@ bool contains_key(const Json::Value& c_value, const std::string_view key) {
   return c_result;
 }
 
-bool contains_string(const Json::Value& c_value, const std::string_view key) {
+bool contains_string(const Json::Value& c_value,
+                     const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_key(c_value, key) && c_value[key.data()].isString();
 }
 
-bool contains_double(const Json::Value& c_value, const std::string_view key) {
+bool contains_double(const Json::Value& c_value,
+                     const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_key(c_value, key) && c_value[key.data()].isDouble();
 }
 
-bool contains_int(const Json::Value& c_value, const std::string_view key) {
+bool contains_int(const Json::Value& c_value,
+                  const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_key(c_value, key) && c_value[key.data()].isInt();
 }
 
-bool contains_array(const Json::Value& c_value, const std::string_view key) {
+bool contains_array(const Json::Value& c_value,
+                    const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_key(c_value, key) && c_value[key.data()].isArray();
 }
 
-bool contains_object(const Json::Value& c_value, const std::string_view key) {
+bool contains_object(const Json::Value& c_value,
+                     const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_key(c_value, key) && c_value[key.data()].isObject();
 }
 
 std::optional<std::string> get_string(const Json::Value& c_value,
-                                      const std::string_view key) {
+                                      const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_string(c_value, key)
@@ -117,7 +123,7 @@ std::optional<std::string> get_string(const Json::Value& c_value,
 }
 
 std::optional<float> get_float(const Json::Value& c_value,
-                               const std::string_view key) {
+                               const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_double(c_value, key) ? c_value[key.data()].asFloat()
@@ -125,7 +131,7 @@ std::optional<float> get_float(const Json::Value& c_value,
 }
 
 std::optional<int> get_int(const Json::Value& c_value,
-                           const std::string_view key) {
+                           const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   return contains_int(c_value, key) ? c_value[key.data()].asInt()
@@ -133,7 +139,7 @@ std::optional<int> get_int(const Json::Value& c_value,
 }
 
 std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
-                                         const std::string_view key) {
+                                         const std::string_view key) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (contains_object(c_value, key)) {
@@ -148,7 +154,7 @@ std::optional<sf::Vector2f> get_vector2f(const Json::Value& c_value,
   return std::nullopt;
 }
 
-bool load_shape(const Json::Value& c_shape, sf::Shape& shapeLink) {
+bool load_shape(const Json::Value& c_shape, sf::Shape& shapeLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (const auto c_position{get_vector2f(c_shape, gsc_positionProp)}) {
@@ -175,7 +181,7 @@ bool load_shape(const Json::Value& c_shape, sf::Shape& shapeLink) {
 }
 
 bool load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
-               b2ShapeDef& shapeDefLink) {
+               b2ShapeDef& shapeDefLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (const auto c_type{get_int(c_body, gsc_typeProp)}) {
@@ -207,7 +213,8 @@ bool load_body(const Json::Value& c_body, b2BodyDef& bodyDefLink,
   return true;
 }
 
-std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
+std::unique_ptr<abstract::brain> load_brain(
+    const Json::Value& c_brain) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (const auto c_type{get_int(c_brain, gsc_typeProp)}) {
@@ -254,7 +261,7 @@ std::unique_ptr<abstract::brain> load_brain(const Json::Value& c_brain) {
 }
 
 void load_entities(const Json::Value& c_root,
-                   std::vector<library::scene_entity>& entitiesLink) {
+                   std::vector<library::scene_entity>& entitiesLink) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   if (!contains_array(c_root, gsc_entitiesProp)) {

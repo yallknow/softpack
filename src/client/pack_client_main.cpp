@@ -15,7 +15,7 @@ constexpr std::string_view gsc_logDirectory{"log/client/"};
 
 }  // namespace
 
-int main() {
+int main() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   app app{};
@@ -34,7 +34,7 @@ int main() {
 }  // namespace client
 }  // namespace pack
 
-int main() {
+int main() noexcept {
   pack::library::logger::init(pack::client::gsc_logDirectory);
 
   if (!pack::library::logger::is_initialized()) {
