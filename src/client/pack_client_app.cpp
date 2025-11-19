@@ -30,6 +30,7 @@ namespace client {
 
 namespace {
 
+constexpr std::uint32_t gsc_widgetScale{5u};
 constexpr std::uint32_t gsc_worldScale{5u};
 constexpr std::uint32_t gsc_borderSize{36u};
 constexpr std::uint32_t gsc_iterationsCount{6u};
@@ -42,16 +43,15 @@ constexpr b2Vec2 gsc_gravity{0.0f, 0.0f};
 
 constexpr std::uint32_t gsc_viewportWidth{1'280u};
 constexpr std::uint32_t gsc_viewportHeight{720u};
-constexpr std::uint32_t gsc_minimapWidth{gsc_viewportWidth / gsc_worldScale};
-constexpr std::uint32_t gsc_minimapHeight{gsc_viewportHeight / gsc_worldScale};
-constexpr std::uint32_t gsc_textureWidth{gsc_viewportWidth * gsc_worldScale};
-constexpr std::uint32_t gsc_textureHeight{gsc_viewportHeight * gsc_worldScale};
-constexpr std::uint32_t gsc_sceneManagerWidth{gsc_minimapWidth};
-constexpr std::uint32_t gsc_sceneManagerHeight{gsc_minimapHeight -
-                                               gsc_borderSize};
-constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_minimapWidth +
+constexpr std::uint32_t gsc_widgetWidth{gsc_viewportWidth / gsc_widgetScale};
+constexpr std::uint32_t gsc_widgetHeight{gsc_viewportHeight / gsc_widgetScale};
+
+constexpr std::uint32_t gsc_windowWidth{gsc_viewportWidth + gsc_widgetWidth +
                                         gsc_borderSize};
 constexpr std::uint32_t gsc_windowHeight{gsc_viewportHeight + gsc_borderSize};
+
+constexpr std::uint32_t gsc_textureWidth{gsc_viewportWidth * gsc_worldScale};
+constexpr std::uint32_t gsc_textureHeight{gsc_viewportHeight * gsc_worldScale};
 
 constexpr std::string_view gsc_viewportTitle{"viewport"};
 constexpr std::string_view gsc_minimapTitle{"minimap"};
@@ -66,13 +66,13 @@ app::app() noexcept
       m_window{sf::VideoMode{gsc_windowWidth, gsc_windowHeight},
                gsc_windowTitle.data()},
       m_scene{},
-      m_sceneManager{gsc_sceneManagerWidth, gsc_sceneManagerHeight,
-                     gsc_sceneManagerTitle, gsc_sceneDirectory},
+      m_sceneManager{gsc_widgetWidth, gsc_widgetHeight, gsc_sceneManagerTitle,
+                     gsc_sceneDirectory},
       m_viewport{gsc_viewportWidth, gsc_viewportHeight, gsc_viewportTitle,
                  m_scene,           gsc_textureWidth,   gsc_textureHeight,
                  gsc_maxZoom},
-      m_minimap{gsc_minimapWidth, gsc_minimapHeight, gsc_minimapTitle,
-                m_scene,          gsc_textureWidth,  gsc_textureHeight} {
+      m_minimap{gsc_widgetWidth, gsc_widgetHeight, gsc_minimapTitle,
+                m_scene,         gsc_textureWidth, gsc_textureHeight} {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
   this->m_window.setFramerateLimit(gsc_windowFramerateLimit);
