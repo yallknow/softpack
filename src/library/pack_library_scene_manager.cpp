@@ -53,6 +53,8 @@ scene_manager::~scene_manager() noexcept { PACK_LIBRARY_LOG_FUNCTION_CALL(); }
 void scene_manager::draw() noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
+  this->get_state();  // To log the current state
+
   if (ImGui::Begin(
           this->mc_title.data(), nullptr,
           ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
@@ -72,9 +74,7 @@ void scene_manager::draw() noexcept {
 
     for (const auto& c_scene : this->m_scenes) {
       if (ImGui::Selectable(c_scene.data(), c_scene == this->m_selectedScene)) {
-        PACK_LIBRARY_LOG_INFO("Scene loader state changed to SELECTED");
-
-        this->m_state = state::SELECTED;
+        this->set_state(state::SELECTED);
         this->m_selectedScene = c_scene;
       }
     }
@@ -89,9 +89,9 @@ void scene_manager::draw() noexcept {
         gsc_btnRefresh,
         this->m_state != state::IDLE && this->m_state != state::SELECTED,
         [this]() -> void {
-          PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
+          PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-          this->m_state = state::IDLE;
+          this->set_state(state::IDLE);
           this->refresh();
         });
 
@@ -99,35 +99,35 @@ void scene_manager::draw() noexcept {
 
     draw_button(gsc_btnLoad, this->m_state != state::SELECTED,
                 [this]() -> void {
-                  PACK_LIBRARY_LOG_INFO("Scene loader state changed to READY");
+                  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-                  this->m_state = state::READY;
+                  this->set_state(state::READY);
                 });
 
     ImGui::SameLine();
 
     draw_button(gsc_btnPause, this->m_state != state::RUNNING,
                 [this]() -> void {
-                  PACK_LIBRARY_LOG_INFO("Scene loader state changed to PAUSED");
+                  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-                  this->m_state = state::PAUSED;
+                  this->set_state(state::PAUSED);
                 });
 
     ImGui::SameLine();
 
-    draw_button(
-        gsc_btnResume, this->m_state != state::PAUSED, [this]() -> void {
-          PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
+    draw_button(gsc_btnResume, this->m_state != state::PAUSED,
+                [this]() -> void {
+                  PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-          this->m_state = state::RUNNING;
-        });
+                  this->set_state(state::RUNNING);
+                });
 
     ImGui::SameLine();
 
     draw_button(gsc_btnDrop, this->m_state != state::PAUSED, [this]() -> void {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to DROPPED");
+      PACK_LIBRARY_LOG_FUNCTION_CALL();
 
-      this->m_state = state::DROPPED;
+      this->set_state(state::DROPPED);
       this->refresh();
     });
   }
@@ -143,11 +143,17 @@ bool scene_manager::process_event(const sf::Event& c_event) noexcept {
 scene_manager::state scene_manager::get_state() const noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
 
+  PACK_LIBRARY_LOG_INFO("Current state: " + state_to_string(this->m_state));
+
   return this->m_state;
 }
 
-void scene_manager::set_state(const state& c_state) noexcept {
+void scene_manager::set_state(const state c_state) noexcept {
   PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  PACK_LIBRARY_LOG_INFO("Changing state from " +
+                        state_to_string(this->m_state) + " to " +
+                        state_to_string(c_state));
 
   this->m_state = c_state;
 }
@@ -180,6 +186,27 @@ bool scene_manager::refresh() noexcept {
   }
 
   return true;
+}
+
+std::string scene_manager::state_to_string(const state c_state) {
+  PACK_LIBRARY_LOG_FUNCTION_CALL();
+
+  switch (c_state) {
+    case state::IDLE:
+      return std::string{"IDLE"};
+    case state::SELECTED:
+      return std::string{"SELECTED"};
+    case state::READY:
+      return std::string{"READY"};
+    case state::RUNNING:
+      return std::string{"RUNNING"};
+    case state::PAUSED:
+      return std::string{"PAUSED"};
+    case state::DROPPED:
+      return std::string{"DROPPED"};
+  }
+
+  return std::string{"UNKNOWN"};
 }
 
 }  // namespace library

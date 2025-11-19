@@ -42,12 +42,15 @@ class scene_manager final : public abstract::widget {
 
  public:
   state get_state() const noexcept;
-  void set_state(const state& c_state) noexcept;
+  void set_state(const state c_state) noexcept;
 
   std::string get_selected_scene() const noexcept;
 
  private:
   bool refresh() noexcept;
+
+ private:
+  static std::string state_to_string(const state c_state);
 
  private:
   const std::string mc_path;

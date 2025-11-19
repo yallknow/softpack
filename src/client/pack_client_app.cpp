@@ -174,16 +174,12 @@ void app::main_loop() noexcept {
 
     if (this->m_sceneManager.get_state() ==
         library::scene_manager::state::READY) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to RUNNING");
-
       this->m_sceneManager.set_state(library::scene_manager::state::RUNNING);
 
       this->create_world();
       this->load_scene(this->m_sceneManager.get_selected_scene());
     } else if (this->m_sceneManager.get_state() ==
                library::scene_manager::state::DROPPED) {
-      PACK_LIBRARY_LOG_INFO("Scene loader state changed to IDLE");
-
       this->m_sceneManager.set_state(library::scene_manager::state::IDLE);
 
       this->m_scene.clear();
