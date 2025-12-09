@@ -11,3 +11,4 @@ class ExampleRecipe(ConanFile):
         self.requires("jsoncpp/1.9.6")
         self.requires("imgui/1.91.8-docking", override=True)
         self.requires("imgui-sfml/2.6.1")
+        self.requires("libpng/1.6.50")
