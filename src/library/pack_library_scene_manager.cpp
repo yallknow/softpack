@@ -3,6 +3,7 @@
 #include <imgui.h>
 
 #include <filesystem>
+#include <functional>
 
 #include "pack_library_preprocessor.hpp"
 
